@@ -149,4 +149,8 @@ if submitted:
     elif dominujacy_poziom == 1:
         st.info("### 🟢 Kierunek Rozwoju")
         st.write("Organizacja wykazuje wstępną świadomość. Rekomendacja: Formalizacja spotkań zespołu oraz jasne zdefiniowanie, jakie mierniki proekologiczne są kluczowe dla logistyki.")
+    elif dominujacy_poziom == 5:
+        st.info("### 💎 Kierunek Rozwoju")
+        st.write("Jest imo zajebiście.")
+
     # ... dodaj własne rozbudowane analizy i wnioski dla Poziomów 2, 3, 4 i 5, opierając się na punktacji!
