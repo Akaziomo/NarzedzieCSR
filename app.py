@@ -73,12 +73,12 @@ pytania_df = pd.DataFrame({
 })
 
 poziomy_nazwy = {
-    0: "🛑 Brak Formalnego CSR (Poziom 0)", 
-    1: "🟢 Wczesny Rozwój (Poziom 1)", 
-    2: "🔵 Transformacja (Poziom 2)", 
-    3: "🟠 Integracja (Poziom 3)", 
-    4: "🟣 Dojrzałość (Poziom 4)", 
-    5: "💎 Innowacyjne Przywództwo (Poziom 5)"
+    0: "Brak Formalnego CSR (Poziom 0)", 
+    1: "Wczesny Rozwój (Poziom 1)", 
+    2: "Transformacja (Poziom 2)", 
+    3: "Integracja (Poziom 3)", 
+    4: "Dojrzałość (Poziom 4)", 
+    5: "Innowacyjne Przywództwo (Poziom 5)"
 }
 
 poziomy_opisy = {
