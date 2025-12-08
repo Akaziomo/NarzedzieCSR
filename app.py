@@ -111,7 +111,7 @@ initialize_anchor()
 # 1. STRONA POWITALNA
 if st.session_state["page"] == "welcome":
     scroll_to_top() 
-    st.title("🌱 Narzędzie Oceny Procesów Logistycznych (CSR)")
+    st.title("Narzędzie Oceny Procesów Logistycznych (CSR)")
     st.header("Witaj w narzędziu do oceny dojrzałości CSR w logistyce!")
     
     st.markdown("""
@@ -146,11 +146,10 @@ if st.session_state["page"] == "welcome":
 
 # 2. STRONA Z TESTEM (FORMULARZ)
 elif st.session_state["page"] == "test":
-    scroll_to_top() 
-    st.markdown("Proszę odpowiedzieć na poniższe pytania, aby określić poziom dojrzałości CSR.")
+    scroll_to_top()
     with st.form("formularz_oceny"):
         
-        st.header("Kryteria I: Struktura Organizacyjna i Surowce")
+#        st.header("Kryteria I: Struktura Organizacyjna i Surowce")
         
         for index, row in pytania_df.iterrows():
             st.subheader(f"{row['Pytanie']}")
@@ -172,7 +171,7 @@ elif st.session_state["page"] == "test":
 elif st.session_state["page"] == "results":
     
     scroll_to_top() # Przewiń do góry, aby zobaczyć wyniki
-    st.header("📊 Wynik Oceny i Rekomendacje")
+    st.header("Wynik Oceny i Rekomendacje")
     
     wyniki_poziomow = st.session_state.wyniki_poziomow
 
@@ -188,9 +187,9 @@ elif st.session_state["page"] == "results":
     
     max_punkty = wyniki_poziomow[dominujacy_poziom]
     
-    st.success(f"## 🏆 Osiągnięty Poziom Dojrzałości: {poziomy_nazwy[dominujacy_poziom]}")
+    st.success(f"##Osiągnięty Poziom Dojrzałości: {poziomy_nazwy[dominujacy_poziom]}")
     
-    # DODANA SEKCJA: WYJAŚNIENIE OSIĄGNIĘTEGO POZIOMU
+    #SEKCJA: WYJAŚNIENIE OSIĄGNIĘTEGO POZIOMU
     st.markdown(f"**Opis:** {poziomy_opisy[dominujacy_poziom]}")
 
     st.markdown("---")
@@ -246,3 +245,4 @@ elif st.session_state["page"] == "results":
         Autorzy: Olga Paszyńska, Justyna Robak, Urszula Sewerniuk. Promotor: dr inż. Katarzyna Ragin-Skorecka.
     </p>
     """, unsafe_allow_html=True)
+
