@@ -1,45 +1,164 @@
-# app.py - Narzędzie Oceny CSR w Logistyce wersja 4.2
+# app.py - Narzędzie Oceny CSR w Logistyce wersja 5.6 (Finalne usunięcie kolumny roboczej Qualified)
 
 import streamlit as st
 import pandas as pd
 import time
+import uuid 
+import json
 
 # ----------------------------------------------------------------------
 # 0. FUNKCJE POMOCNICZE
 # ----------------------------------------------------------------------
 
-def initialize_anchor():
-    if 'top_anchor' not in st.session_state:
-        st.session_state.top_anchor = st.empty()
+# Definicja potencjału: maksymalna liczba punktów, jaką można zdobyć dla danego poziomu
+# Potencjały są kluczowe dla obliczeń Composite Score
+poziom_potencjal = {
+    0: 0, # Poziom 0 wyłączony z oceny procentowej
+    1: 4, # Max 4 punkty (Q1-Nie, Q2-Nie, Q3-Nie, Q4-1%)
+    2: 3, # Max 3 punkty (Q1-Tak, Q2-Tak, Q4-10%)
+    3: 2, # Max 2 punkty (Q3-Tak, Q4-30%)
+    4: 1, # Max 1 punkt (Q4-50%)
+    5: 1  # Max 1 punkt (Q4-85%)
+}
 
-def scroll_to_top():
-    """Wymusza przewinięcie do elementu kotwicy na samej górze strony."""
-    if 'top_anchor' in st.session_state:
-        time.sleep(0.01)
-        st.session_state.top_anchor.empty()
+# STAŁE DLA SYSTEMU OCENY CSR
+CSR_SYSTEM_CONSTANTS = {
+    "prior": 0.5,           # Wartość oczekiwana (E)
+    "m": 3,                 # Siła wygładzania (m - liczba 'pseudo-obserwacji')
+    "alpha": 0.7,           # Waga procentu realizacji (alpha) w wyniku złożonym
+    "min_points_fraction": 0.1 # Minimalny procent maksymalnych punktów wymagany do kwalifikacji
+}
 
-# Funkcja do obliczania punktów na podstawie wybranych opcji
-def calculate_scores(pytania_df):
-    st.session_state.wyniki_poziomow = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+
+# FUNKCJA IMPLEMENTUJĄCA SYSTEM OCENY CSR (Composite Score i Kwalifikacja)
+def calculate_scores_and_determine_level(pytania_df):
+    
+    CONST = CSR_SYSTEM_CONSTANTS
+    
+    # 1. Zliczanie punktów i wstępna weryfikacja
+    st.session_state.wyniki_poziomow = {p: 0 for p in poziom_potencjal.keys()} 
+    
+    all_answered = True
+    total_max_score = sum(poziom_potencjal.values())
     
     for index, row in pytania_df.iterrows():
         klucz_pytania = row['Klucz']
-        
         wybrana_opcja_label = st.session_state.get(klucz_pytania)
 
-        if wybrana_opcja_label is not None:
-            
-            punkty_za_odpowiedz_id = row['Opcje_Punkty'][wybrana_opcja_label]
+        if wybrana_opcja_label is None:
+            all_answered = False
+            break 
 
-            przypisany_poziom = row['Przypisanie_Poziomów'][punkty_za_odpowiedz_id]
+        punkty_za_odpowiedz_id = row['Opcje_Punkty'][wybrana_opcja_label]
+        przypisane_poziomy = row['Przypisanie_Poziomów'][punkty_za_odpowiedz_id]
+        
+        # Zliczanie punktów (obsługa starej struktury V4.2)
+        poziomy_do_zliczenia = []
+        if isinstance(przypisane_poziomy, list):
+            poziomy_do_zliczenia = przypisane_poziomy
+        elif isinstance(przypisane_poziomy, int):
+             poziomy_do_zliczenia = [przypisane_poziomy]
+        
+        for poziom in poziomy_do_zliczenia:
+            if poziom in st.session_state.wyniki_poziomow:
+                st.session_state.wyniki_poziomow[poziom] += 1
+                
+    if not all_answered:
+        st.error("Proszę odpowiedzieć na wszystkie pytania, aby obliczyć poziom dojrzałości CSR.")
+        return
+
+    # --- 2. IMPLEMENTACJA LOGIKI OCENY (Composite Score) ---
+    wyniki_poziomow = st.session_state.wyniki_poziomow
+    detailed_results = {}
+    
+    # Przetwarzanie i obliczenia dla każdego poziomu > 0
+    for level, score in wyniki_poziomow.items():
+        if level == 0:
+            continue
             
-            if przypisany_poziom > 0:
-                st.session_state.wyniki_poziomow[przypisany_poziom] += 1
+        max_p = poziom_potencjal.get(level, 0)
+        
+        if max_p == 0:
+            continue 
+            
+        # 2.1. Procent realizacji poziomu (surowy)
+        pct = score / max_p
+        
+        # 2.2. Wygładzony procent realizacji (Laplace / Bayesian smoothing)
+        adj_pct = (score + CONST['m'] * CONST['prior']) / (max_p + CONST['m'])
+        
+        # 2.3. Udział poziomu w całej puli pytań (skala poziomu)
+        share = score / total_max_score
+        
+        # 2.4. Wynik złożony (composite score)
+        composite = CONST['alpha'] * adj_pct + (1 - CONST['alpha']) * share
+        
+        # 3.1. Minimalna liczba punktów do kwalifikacji
+        # Używamy max(1, ...) aby uniknąć problemów dla max_p = 1
+        min_required = max(1, CONST['min_points_fraction'] * max_p) 
+        
+        # 3.2. Reguła kwalifikacji
+        qualified = score >= min_required
+        
+        detailed_results[level] = {
+            "score": score,
+            "max_points": max_p,
+            "pct": pct,
+            "composite": composite, # Zachowujemy Composite Score do sortowania
+            "qualified": qualified
+        }
+        
+    # 4. Wyznaczenie poziomu użytkownika
+    
+    # 4.1. Filtracja i sortowanie
+    qualified_levels = [
+        (level, data['composite']) 
+        for level, data in detailed_results.items() 
+        if data['qualified']
+    ]
+    
+    # Sortowanie malejąco wg composite score
+    qualified_levels.sort(key=lambda item: item[1], reverse=True)
+    
+    main_level = 0 # Domyślnie Poziom 0
+    secondary_level = 0
+    
+    if qualified_levels:
+        # Główny poziom: ten z najwyższym composite score spośród kwalifikowanych
+        main_level = qualified_levels[0][0]
+        
+        # Drugi najlepszy poziom (jeśli istnieje)
+        if len(qualified_levels) > 1:
+            secondary_level = qualified_levels[1][0]
+    
+    # Jeśli żaden poziom nie jest kwalifikowany, poziomem głównym jest Poziom 0
+    # (main_level = 0 jest już ustawione jako domyślne)
+        
+    st.session_state.dominujacy_poziom = main_level
+    st.session_state.secondary_level = secondary_level
+    st.session_state.detailed_results = detailed_results # Zachowujemy szczegóły dla ewentualnej prostej tabeli
+    
+    # Uproszczona realizacja procentowa do wyświetlenia
+    realizacja_procentowa = {
+        lvl: data['pct'] * 100
+        for lvl, data in detailed_results.items()
+    }
+    realizacja_procentowa[0] = 0.0
+    st.session_state.realizacja_procentowa = realizacja_procentowa
+
+    # Przejście do strony wyników
+    st.session_state.update(page="results")
+
                 
 def go_to_test():
     st.session_state["page"] = "test"
-    st.session_state.wyniki_poziomow = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-    scroll_to_top()
+    st.session_state.wyniki_poziomow = {p: 0 for p in poziom_potencjal.keys()}
+    st.session_state.secondary_level = 0
+    st.session_state.detailed_results = {}
+    # Resetowanie wszystkich odpowiedzi z formularza przed nowym testem
+    for index, row in pytania_df.iterrows():
+        if row['Klucz'] in st.session_state:
+            st.session_state.pop(row['Klucz'])
 
 
 # ----------------------------------------------------------------------
@@ -64,11 +183,12 @@ pytania_df = pd.DataFrame({
         {'0%': 0, '1%-9%': 1, '10%-30%': 2, '30%-50%': 3, '50%-85%': 4, '85% <': 5}
     ],
     
+    # Stara struktura, którą musimy zachować
     'Przypisanie_Poziomów': [
-        {2: 2, 1: 1},
-        {2: 2, 1: 1},
-        {3: 3, 1: 1},
-        {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
+        {2: 2, 1: 1}, # 2->P2, 1->P1
+        {2: 2, 1: 1}, # 2->P2, 1->P1
+        {3: 3, 1: 1}, # 3->P3, 1->P1
+        {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5} # 0->P0, 1->P1...
     ]
 })
 
@@ -99,19 +219,25 @@ if 'page' not in st.session_state:
     st.session_state["page"] = "welcome"
 
 if 'wyniki_poziomow' not in st.session_state:
-    st.session_state.wyniki_poziomow = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0} 
+    st.session_state.wyniki_poziomow = {p: 0 for p in poziom_potencjal.keys()} 
+if 'dominujacy_poziom' not in st.session_state:
+    st.session_state.dominujacy_poziom = 0
+if 'secondary_level' not in st.session_state:
+    st.session_state.secondary_level = 0
+if 'realizacja_procentowa' not in st.session_state:
+    st.session_state.realizacja_procentowa = {p: 0.0 for p in poziom_potencjal.keys()}
+if 'detailed_results' not in st.session_state:
+     st.session_state.detailed_results = {}
+
 
 st.set_page_config(page_title="Narzędzie Oceny CSR w Logistyce", layout="wide") 
-
-initialize_anchor()
 
 
 # --- LOGIKA PRZECHODZENIA MIĘDZY STRONAMI ---
 
 # 1. STRONA POWITALNA
 if st.session_state["page"] == "welcome":
-    scroll_to_top() 
-    st.title("Narzędzie Oceny Procesów Logistycznych (CSR)")
+    st.title("🌱 Narzędzie Oceny Procesów Logistycznych (CSR)")
     st.header("Witaj w narzędziu do oceny dojrzałości CSR w logistyce!")
     
     st.markdown("""
@@ -127,8 +253,8 @@ if st.session_state["page"] == "welcome":
     2.  **Rekomendacje:** Na podstawie odpowiedzi otrzymasz ukierunkowane zalecenia 
         dotyczące kolejnych kroków, które pozwolą przejść na wyższy poziom dojrzałości.
 
-    3.  **Świadomość:** Wzrost świadomości kluczowych aspektów CSR w łańcuchu dostaw.
-
+    3.  **Edukacja:** Pogłębisz wiedze na temat kluczowych standardów i najlepszych praktyk CSR w Twoim łańcuchu dostaw.
+ 
     Proszę odpowiadać na pytania szczerze i zgodnie z aktualnym stanem w firmie.
     """)
     
@@ -146,59 +272,51 @@ if st.session_state["page"] == "welcome":
 
 # 2. STRONA Z TESTEM (FORMULARZ)
 elif st.session_state["page"] == "test":
-    scroll_to_top()
     with st.form("formularz_oceny"):
         
-#        st.header("Kryteria I: Struktura Organizacyjna i Surowce")
+        st.header("Kryteria I: Struktura Organizacyjna i Surowce")
         
         for index, row in pytania_df.iterrows():
             st.subheader(f"{row['Pytanie']}")
             
             opcje_list = list(row['Opcje_Punkty'].keys())
             
+            # Wymuszenie wyboru bez domyślnej opcji
             st.radio(
                 "Wybierz odpowiedź:", 
                 opcje_list, 
-                key=row['Klucz'] 
+                key=row['Klucz'],
+                index=None # Wymuszenie braku wyboru na start
             )
 
         st.form_submit_button(
             "Oblicz Poziom Zrównoważonego Rozwoju",
-            on_click=lambda: (calculate_scores(pytania_df), st.session_state.update(page="results"), scroll_to_top()) 
+            on_click=lambda: (calculate_scores_and_determine_level(pytania_df))
         )
 
 # 3. STRONA Z WYNIKAMI
 elif st.session_state["page"] == "results":
     
-    scroll_to_top() # Przewiń do góry, aby zobaczyć wyniki
     st.header("Wynik Oceny i Rekomendacje")
     
-    wyniki_poziomow = st.session_state.wyniki_poziomow
-
-    punkty_do_analizy = {p: pkt for p, pkt in wyniki_poziomow.items() if pkt > 0 or p == 0} 
+    dominujacy_poziom = st.session_state.dominujacy_poziom
+    secondary_level = st.session_state.secondary_level
     
-    max_punkty_wszystkie = max(punkty_do_analizy.values())
+    st.success(f"Osiągnięty Poziom Dojrzałości: {poziomy_nazwy[dominujacy_poziom]}")
     
-    if max_punkty_wszystkie == 0:
-        dominujacy_poziom = 0
-    else:
-        remisowe_poziomy = [p for p, pkt in punkty_do_analizy.items() if pkt == max_punkty_wszystkie]
-        dominujacy_poziom = min(remisowe_poziomy)
-    
-    max_punkty = wyniki_poziomow[dominujacy_poziom]
-    
-    st.success(f"##Osiągnięty Poziom Dojrzałości: {poziomy_nazwy[dominujacy_poziom]}")
-    
-    #SEKCJA: WYJAŚNIENIE OSIĄGNIĘTEGO POZIOMU
     st.markdown(f"**Opis:** {poziomy_opisy[dominujacy_poziom]}")
+
+    # Sekcja dla poziomu wtórnego - tylko jeśli nie jest Poziomem 0 i jest różny od głównego
+    if secondary_level > 0 and secondary_level != dominujacy_poziom:
+         st.markdown(f"Firma wykazała również silne dopasowanie do **{poziomy_nazwy[secondary_level]}**.")
 
     st.markdown("---")
 
-    # 3. Generowanie Inteligentnego Podsumowania (Wnioski i Rekomendacje)
+    # 3. Generowanie Wniosków i Rekomendacji
     st.subheader("Wnioski i Rekomendacje:")
     
     if dominujacy_poziom == 0:
-        st.write("Brak formalnych struktur i mierników oraz brak użycia zrównoważonych surowców wskazują na **brak wdrożonego CSR**. Należy jak najszybciej powołać zespół roboczy (Poziom 1).")
+        st.write("Brak kwalifikacji do wyższego poziomu. Należy jak najszybciej powołać zespół roboczy (Poziom 1).")
     elif dominujacy_poziom == 1:
         st.write("Organizacja wykazuje wstępną świadomość. Rekomendacja: Należy sformalizować działania poprzez wprowadzenie regularnych spotkań zespołu i wyznaczenie celów, aby osiągnąć **Poziom 2 (Transformacja)**.")
     elif dominujacy_poziom == 2:
@@ -212,24 +330,60 @@ elif st.session_state["page"] == "results":
 
     st.markdown("---")
 
-    # 2. Wyświetlenie punktacji w tabeli
-    st.subheader("Szczegółowa Punktacja dla Każdego Poziomu:")
-    df_wyniki = pd.DataFrame(
-        list(wyniki_poziomow.items()), 
-        columns=['Poziom', 'Suma Punktów']
-    )
-    df_wyniki['Nazwa Poziomu'] = df_wyniki['Poziom'].map(poziomy_nazwy)
-    df_wyniki = df_wyniki[['Poziom', 'Nazwa Poziomu', 'Suma Punktów']]
+    # 2. Wyświetlenie prostej tabeli punktacji
+    st.subheader("Punktacja Poziomu:")
     
-    # FUNKCJA PODŚWIETLANIA:
-    def highlight_dominant_level(row, dominant_level_id):
+    realizacje_data = []
+
+    # Generowanie danych tylko dla poziomów 1-5
+    for p in sorted(poziom_potencjal.keys()):
+        if p == 0: continue
+        
+        # Pobieranie danych z wyników
+        data = st.session_state.detailed_results.get(p, {})
+        score = data.get('score', 0)
+        max_p = data.get('max_points', poziom_potencjal.get(p, 0))
+        pct = data.get('pct', 0.0)
+        qualified = data.get('qualified', False)
+
+        realizacje_data.append({
+            'Poziom': p,
+            'Nazwa Poziomu': poziomy_nazwy[p].split('(')[0].strip(),
+            'Max Punkty': max_p,
+            'Zdobyte Punkty': score,
+        })
+
+    df_wyniki = pd.DataFrame(realizacje_data)
+    
+    # FUNKCJA PODŚWIETLANIA: Wyróżnia TYLKO główny poziom na żółto
+    def highlight_level_status(row, dominant_level_id):
+        # Inicjalizacja pustych stylów dla wszystkich kolumn
+        styles = ['' for _ in row]
+        
         is_dominant = row['Poziom'] == dominant_level_id
-        return ['background-color: #ffdd44; color: black' if is_dominant else '' for _ in row]
+        
+        # Wyróżnienie głównego, dominującego poziomu (cały wiersz na żółto)
+        if is_dominant:
+            # Stosujemy styl do wszystkich komórek w wierszu
+            return ['background-color: #ffdd44; color: black; font-weight: bold' for _ in row]
+
+        # W przeciwnym razie zwracamy puste style (brak podświetlenia)
+        return styles
+        
+    # Tworzenie stylera w jednym, poprawnie sformatowanym wywołaniu łańcuchowym
+    styler = (
+        df_wyniki.style
+        .apply(highlight_level_status, 
+                  axis=1, 
+                  dominant_level_id=dominujacy_poziom)
+        # POPRAWKA: Dodanie _Qualified do listy kolumn do ukrycia
+        .hide(subset=['Poziom'], axis="columns")
+    )
+
     st.dataframe(
-        df_wyniki.style.apply(highlight_dominant_level, 
-                              axis=1, # Ważne: stosujemy do wierszy
-                              dominant_level_id=dominujacy_poziom),
-        hide_index=True
+        styler,
+        hide_index=True,
+        use_container_width=True
     )
 
     st.markdown("---")
@@ -245,4 +399,3 @@ elif st.session_state["page"] == "results":
         Autorzy: Olga Paszyńska, Justyna Robak, Urszula Sewerniuk. Promotor: dr inż. Katarzyna Ragin-Skorecka.
     </p>
     """, unsafe_allow_html=True)
-
