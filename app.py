@@ -1,4 +1,4 @@
-# app.py - Narzędzie Oceny CSR w Logistyce wersja 5.6 (Finalne usunięcie kolumny roboczej Qualified)
+# app.py - Narzędzie Oceny CSR w Logistyce wersja 5.6
 
 import streamlit as st
 import pandas as pd
@@ -10,27 +10,22 @@ import json
 # 0. FUNKCJE POMOCNICZE
 # ----------------------------------------------------------------------
 
-# Definicja potencjału: maksymalna liczba punktów, jaką można zdobyć dla danego poziomu
-# Potencjały są kluczowe dla obliczeń Composite Score
 poziom_potencjal = {
-    0: 0, # Poziom 0 wyłączony z oceny procentowej
-    1: 4, # Max 4 punkty (Q1-Nie, Q2-Nie, Q3-Nie, Q4-1%)
-    2: 3, # Max 3 punkty (Q1-Tak, Q2-Tak, Q4-10%)
-    3: 2, # Max 2 punkty (Q3-Tak, Q4-30%)
-    4: 1, # Max 1 punkt (Q4-50%)
-    5: 1  # Max 1 punkt (Q4-85%)
+    0: 0,
+    1: 4,
+    2: 3,
+    3: 2,
+    4: 1,
+    5: 1
 }
 
-# STAŁE DLA SYSTEMU OCENY CSR
 CSR_SYSTEM_CONSTANTS = {
-    "prior": 0.5,           # Wartość oczekiwana (E)
-    "m": 3,                 # Siła wygładzania (m - liczba 'pseudo-obserwacji')
-    "alpha": 0.7,           # Waga procentu realizacji (alpha) w wyniku złożonym
-    "min_points_fraction": 0.1 # Minimalny procent maksymalnych punktów wymagany do kwalifikacji
+    "prior": 0.5,
+    "m": 3,
+    "alpha": 0.7,
+    "min_points_fraction": 0.1
 }
 
-
-# FUNKCJA IMPLEMENTUJĄCA SYSTEM OCENY CSR (Composite Score i Kwalifikacja)
 def calculate_scores_and_determine_level(pytania_df):
     
     CONST = CSR_SYSTEM_CONSTANTS
@@ -52,7 +47,7 @@ def calculate_scores_and_determine_level(pytania_df):
         punkty_za_odpowiedz_id = row['Opcje_Punkty'][wybrana_opcja_label]
         przypisane_poziomy = row['Przypisanie_Poziomów'][punkty_za_odpowiedz_id]
         
-        # Zliczanie punktów (obsługa starej struktury V4.2)
+        # Zliczanie punktów
         poziomy_do_zliczenia = []
         if isinstance(przypisane_poziomy, list):
             poziomy_do_zliczenia = przypisane_poziomy
@@ -71,7 +66,6 @@ def calculate_scores_and_determine_level(pytania_df):
     wyniki_poziomow = st.session_state.wyniki_poziomow
     detailed_results = {}
     
-    # Przetwarzanie i obliczenia dla każdego poziomu > 0
     for level, score in wyniki_poziomow.items():
         if level == 0:
             continue
@@ -81,64 +75,44 @@ def calculate_scores_and_determine_level(pytania_df):
         if max_p == 0:
             continue 
             
-        # 2.1. Procent realizacji poziomu (surowy)
         pct = score / max_p
-        
-        # 2.2. Wygładzony procent realizacji (Laplace / Bayesian smoothing)
         adj_pct = (score + CONST['m'] * CONST['prior']) / (max_p + CONST['m'])
         
-        # 2.3. Udział poziomu w całej puli pytań (skala poziomu)
         share = score / total_max_score
         
-        # 2.4. Wynik złożony (composite score)
         composite = CONST['alpha'] * adj_pct + (1 - CONST['alpha']) * share
-        
-        # 3.1. Minimalna liczba punktów do kwalifikacji
-        # Używamy max(1, ...) aby uniknąć problemów dla max_p = 1
         min_required = max(1, CONST['min_points_fraction'] * max_p) 
-        
-        # 3.2. Reguła kwalifikacji
         qualified = score >= min_required
         
         detailed_results[level] = {
             "score": score,
             "max_points": max_p,
             "pct": pct,
-            "composite": composite, # Zachowujemy Composite Score do sortowania
+            "composite": composite,
             "qualified": qualified
         }
         
-    # 4. Wyznaczenie poziomu użytkownika
-    
-    # 4.1. Filtracja i sortowanie
     qualified_levels = [
         (level, data['composite']) 
         for level, data in detailed_results.items() 
         if data['qualified']
     ]
-    
-    # Sortowanie malejąco wg composite score
+
     qualified_levels.sort(key=lambda item: item[1], reverse=True)
     
     main_level = 0 # Domyślnie Poziom 0
     secondary_level = 0
     
     if qualified_levels:
-        # Główny poziom: ten z najwyższym composite score spośród kwalifikowanych
         main_level = qualified_levels[0][0]
         
-        # Drugi najlepszy poziom (jeśli istnieje)
         if len(qualified_levels) > 1:
             secondary_level = qualified_levels[1][0]
-    
-    # Jeśli żaden poziom nie jest kwalifikowany, poziomem głównym jest Poziom 0
-    # (main_level = 0 jest już ustawione jako domyślne)
-        
+ 
     st.session_state.dominujacy_poziom = main_level
     st.session_state.secondary_level = secondary_level
-    st.session_state.detailed_results = detailed_results # Zachowujemy szczegóły dla ewentualnej prostej tabeli
+    st.session_state.detailed_results = detailed_results
     
-    # Uproszczona realizacja procentowa do wyświetlenia
     realizacja_procentowa = {
         lvl: data['pct'] * 100
         for lvl, data in detailed_results.items()
@@ -146,7 +120,6 @@ def calculate_scores_and_determine_level(pytania_df):
     realizacja_procentowa[0] = 0.0
     st.session_state.realizacja_procentowa = realizacja_procentowa
 
-    # Przejście do strony wyników
     st.session_state.update(page="results")
 
                 
@@ -159,7 +132,6 @@ def go_to_test():
     for index, row in pytania_df.iterrows():
         if row['Klucz'] in st.session_state:
             st.session_state.pop(row['Klucz'])
-
 
 # ----------------------------------------------------------------------
 # 1. DEFINICJA PYTAŃ, PUNKTACJI I OPISÓW POZIOMÓW
@@ -183,12 +155,12 @@ pytania_df = pd.DataFrame({
         {'0%': 0, '1%-9%': 1, '10%-30%': 2, '30%-50%': 3, '50%-85%': 4, '85% <': 5}
     ],
     
-    # Stara struktura, którą musimy zachować
+
     'Przypisanie_Poziomów': [
-        {2: 2, 1: 1}, # 2->P2, 1->P1
-        {2: 2, 1: 1}, # 2->P2, 1->P1
-        {3: 3, 1: 1}, # 3->P3, 1->P1
-        {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5} # 0->P0, 1->P1...
+        {2: 2, 1: 1},
+        {2: 2, 1: 1},
+        {3: 3, 1: 1},
+        {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
     ]
 })
 
@@ -214,7 +186,6 @@ poziomy_opisy = {
 # 2. INTERFEJS UŻYTKOWNIKA (Streamlit)
 # ----------------------------------------------------------------------
 
-# --- INICJALIZACJA STANU SESJI ---
 if 'page' not in st.session_state:
     st.session_state["page"] = "welcome"
 
@@ -306,13 +277,8 @@ elif st.session_state["page"] == "results":
     
     st.markdown(f"**Opis:** {poziomy_opisy[dominujacy_poziom]}")
 
-    # Sekcja dla poziomu wtórnego - tylko jeśli nie jest Poziomem 0 i jest różny od głównego
-    if secondary_level > 0 and secondary_level != dominujacy_poziom:
-         st.markdown(f"Firma wykazała również silne dopasowanie do **{poziomy_nazwy[secondary_level]}**.")
-
     st.markdown("---")
 
-    # 3. Generowanie Wniosków i Rekomendacji
     st.subheader("Wnioski i Rekomendacje:")
     
     if dominujacy_poziom == 0:
@@ -330,16 +296,13 @@ elif st.session_state["page"] == "results":
 
     st.markdown("---")
 
-    # 2. Wyświetlenie prostej tabeli punktacji
     st.subheader("Punktacja Poziomu:")
     
     realizacje_data = []
 
-    # Generowanie danych tylko dla poziomów 1-5
     for p in sorted(poziom_potencjal.keys()):
         if p == 0: continue
         
-        # Pobieranie danych z wyników
         data = st.session_state.detailed_results.get(p, {})
         score = data.get('score', 0)
         max_p = data.get('max_points', poziom_potencjal.get(p, 0))
@@ -355,28 +318,20 @@ elif st.session_state["page"] == "results":
 
     df_wyniki = pd.DataFrame(realizacje_data)
     
-    # FUNKCJA PODŚWIETLANIA: Wyróżnia TYLKO główny poziom na żółto
     def highlight_level_status(row, dominant_level_id):
-        # Inicjalizacja pustych stylów dla wszystkich kolumn
         styles = ['' for _ in row]
         
         is_dominant = row['Poziom'] == dominant_level_id
         
-        # Wyróżnienie głównego, dominującego poziomu (cały wiersz na żółto)
         if is_dominant:
-            # Stosujemy styl do wszystkich komórek w wierszu
             return ['background-color: #ffdd44; color: black; font-weight: bold' for _ in row]
-
-        # W przeciwnym razie zwracamy puste style (brak podświetlenia)
         return styles
         
-    # Tworzenie stylera w jednym, poprawnie sformatowanym wywołaniu łańcuchowym
     styler = (
         df_wyniki.style
         .apply(highlight_level_status, 
                   axis=1, 
                   dominant_level_id=dominujacy_poziom)
-        # POPRAWKA: Dodanie _Qualified do listy kolumn do ukrycia
         .hide(subset=['Poziom'], axis="columns")
     )
 
