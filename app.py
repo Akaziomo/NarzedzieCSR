@@ -109,12 +109,12 @@ pytania_data = [
     #Pytanie 1
     ("Jak często odbywają się audyty energetyczne?", 'q_ekon_audyty_e', 
      {'Rzadziej niż co 4 lata': 0, 'Regularnie co 4 lata': 1, 'Częściej niż co 4 lata': 5}, 
-     {0: [0], 1: [1,2,3,4], 5: [5]}, ekonomiczny),
+     {0: [0], 1: [3], 5: [5]}, ekonomiczny),
 
     #Pytanie 2
     ("Jaka jest dostępność systemu operacyjnego firmy (taboru, maszyn, urządzeń)?", 'q_ekon_dostepnosc', 
      {'Poniżej 90%': 0, '90-95%': 1, 'Powyżej 95%': 5}, 
-     {0: [0], 1: [1,2,3,4], 5: [5]}, ekonomiczny), # Poprawiono: było błąd w Twoim wklejonym kodzie [5] zamiast [5]
+     {0: [0], 1: [3], 5: [5]}, ekonomiczny), # Poprawiono: było błąd w Twoim wklejonym kodzie [5] zamiast [5]
     
     #Pytanie 3
     ("Czy w strukturach firmy istnienieje i funkcjonuje zespół ds. zrównoważonego rozwoju?", 'q_ekon_struktury',
@@ -123,16 +123,16 @@ pytania_data = [
     'Tak, zespół opracowuje, testuje oraz wdraża strategię zrównoważonego rozwoju w wybranych obszarach działalności firmy.': 2,
     'Tak, zespół integruje strategię zrównoważonego rozwoju we wszystkich obszarach funkcjonowania firmy.': 3,
     'Tak, zespół skutecznie i konsekwentnie realizuje zintegrowaną strategię, która jest w pełni wdrożona, monitorowana i stale doskonalona w całej organizacji.': 4},
-    {0: [0], 1:[1], 2:[2], 3:[3], 4:[4,5]}, ekonomiczny),
+    {0: [0], 1:[1], 2:[2], 3:[3], 4:[5]}, ekonomiczny),
 
     #Pytanie 4
     ("Jaki jest stosunek firmy do społecznej odpowiedzialności biznesu (CSR)?", 'q_ekon_csr',
     {'Firma wykazuje ignorancję wobec zasad CSR lub prezentuje wobec nich negatywne nastawienie.': 0,
     'Zarząd przejawia zainteresowanie tematyką CSR, jednak nie podejmuje jeszcze konkretnych działań.': 1,
     'Zarząd inicjuje pierwsze działania związane z wdrażaniem zasad CSR w organizacji.': 2,
-    'Firma jest aktywnie zaangażowana w CSR oraz systematycznie wspiera i prowadzi regularne działania w tym obszarze.': 4,
-    'Firma promuje zasady CSR zarówno wewnątrz organizacji, jak i na zewnątrz, traktując je jako integralny element strategii firmy i dobrych praktyk rynkowych.': 5},
-    {0: [0], 1: [1], 2: [2], 4: [3,4], 5: [5]}, ekonomiczny),
+    'Firma jest aktywnie zaangażowana w CSR oraz systematycznie wspiera i prowadzi regularne działania w tym obszarze.': 3,
+    'Firma promuje zasady CSR zarówno wewnątrz organizacji, jak i na zewnątrz, traktując je jako integralny element strategii firmy i dobrych praktyk rynkowych.': 4},
+    {0: [0], 1: [1], 2: [2], 3: [4], 4: [5]}, ekonomiczny),
 
     #Pytanie 5
     ("Jaki jest stosunek firmy do rozwoju i doskonalenia swojej działalności?", 'q_ekon_rozwoj',
@@ -147,12 +147,12 @@ pytania_data = [
     #Pytanie 6
     ("Czy zespół wykazuje myślenie strategiczne, kompetencje restrukturyzacyjne i zdolność do samorefleksja?", 'q_ekon_myslenie',
     {'Nie': 0, 'Tak': 1},
-    {0: [0,1], 1: [2,3,4,5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0 i P1, co jest nielogiczne. Poprawiono: {0: [0], 1: [1,2,3,4,5]} - ale trzymam Twoje
+    {0: [1], 1: [5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0 i P1, co jest nielogiczne. Poprawiono: {0: [0], 1: [1,2,3,4,5]} - ale trzymam Twoje
     
     #Pytanie 7
     ("Czy odbywa się współpraca z różnymi podmiotami na poziomach regionalnym, krajowym i/lub międzynarodowym w celu doskonalenia zrównoważonych kompetencji?", 'q_ekon_podmioty',
     {'Nie': 0, 'Tak': 1},
-    {0: [0,1,2,3,4], 1: [5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0-P4. To jest nietypowe, ale trzymam Twoje dane
+    {0: [0], 1: [5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0-P4. To jest nietypowe, ale trzymam Twoje dane
     
     #Pytanie 8
     ("Czy organizacja posiada certyfikat ISO 26000?", 'q_ekon_iso',
@@ -160,57 +160,57 @@ pytania_data = [
     'Organizacja nie posiada jeszcze certyfikatu ISO 26000, jednak rozważa jego wdrożenie w przyszłości.': 1,
     'Organizacja znajduje się w trakcie procesu wdrażania wytycznych normy ISO 26000.': 2,
     'Organizacja posiada certyfikat ISO 26000 lub w pełni i skutecznie wdrożyła wytyczne tej normy w swojej działalności.': 3},
-    {0: [0], 1: [1], 2:[2,3], 3:[4,5]}, ekonomiczny),
+    {0: [0], 1: [1], 2:[3], 3:[5]}, ekonomiczny),
 
     #Pytanie 9
     ("Jaki procent kapitału firmy jest przeznaczany na inwestycje ekologiczne, wspierające lokalną społeczność, badania lub inne inicjatywy o charakterze społecznym i środowiskowym?", 'q_ekon_kapital',
     {'0%': 0, 'Poniżej 5%': 1, '5-10%': 2, '10-15%': 3, 'Powyżej 15%': 4},
-    {0: [0], 1: [1,2], 2: [3], 3: [4], 4: [5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [3], 3: [4], 4: [5]}, ekonomiczny),
 
     #Pytanie 10
     ("Ile wynosi współczynnik zwrotów lub reklamacji w organizacji?", 'q_ekon_zwrot',
     {'Powyżej 5%': 0, '1-5%': 1, '1-0,5%': 2, 'Poniżej 0,5%': 3},
-    {0: [0], 1: [1,2], 2: [3], 3: [4,5]}, ekonomiczny),
+    {0: [0], 1: [1,2], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 11
     ("Ile wynosi współczynnik kompletności zleceń (produkty lub usługi) w organizacji?", 'q_ekon_kompletnosc',
     {'Poniżej 95%': 0, '95-99%': 1, 'Powyżej 99%': 2},
-    {0: [0], 1: [1,2,3,4], 2: [5]}, ekonomiczny),
+    {0: [0], 1: [3], 2: [5]}, ekonomiczny),
 
     #Pytanie 12
     ("Ile wynosi współczynnik terminowości zleceń (produkty lub usługi) w organizacji?", 'q_ekon_termin',
     {'Poniżej 95%': 0, '95-99%': 1, 'Powyżej 99%': 2},
-    {0: [0], 1: [1,2,3,4], 2: [5]}, ekonomiczny),
+    {0: [0], 1: [3], 2: [5]}, ekonomiczny),
 
     #Pytanie 13
     ("Ile wynosi rentowność firmy rozumiana jako stosunek zysku netto do przychodów ze sprzedaży?", 'q_ekon_netto',
     {'Poniżej 0%': 0, 'Poniżej 10%': 1, '10-13%': 2, '13-17%': 3, 'Powyżej 17%': 4},
-    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4,5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [5]}, ekonomiczny),
 
     #Pytanie 14
     ("Ile wynosi zwrot z inwestycji (ROI) z zielonych inwestycji, rozumiany jako stosunek zysku operacyjnego (lub wartości zatrzymanej) do wartości zainwestowanego kapitału?", 'q_ekon_ROI',
     {'Poniżej 0%': 0, '0-5%': 1, '5-10%': 2, '10-15%': 3, 'Powyżej 15%': 4},
-    {0: [0], 1: [1], 2: [2,3], 3: [4], 4: [5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [2], 3: [4], 4: [5]}, ekonomiczny),
 
     #Pytanie 15
     ("Jaki poziom redukcji kosztów operacyjnych został osiągnięty dzięki inicjatywom oszczędnościowym i efektywnościowym (np. termomodernizacja, optymalizacja tras, redukcja zużycia energii)?", 'q_ekon_redukcja',
     {'0% lub poniżej': 0, '0-3%': 1, '3-7%': 2, 'Powyżej 7%': 3},
-    {0: [0], 1: [1], 2: [2,3], 3: [4,5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 16
     ("Jaki procent dostawców/detalistów pochodzi z lokalnego otoczenia?", 'q_ekon_lokalni',
     {'0%': 0, '0-15%': 1, '15-30%': 2, '30-50%': 3, 'Powyżej 50%': 4},
-    {0: [0], 1: [1], 2: [2], 3: [3,4], 4: [5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [5]}, ekonomiczny),
 
     #Pytanie 17
     ("Ile wynosi stopień wykorzystania zdolności, rozumiany jako stosunek wykorzystanej zdolności produkcyjnej, magazynowej lub urządzeń do ich nominalnych możliwościi?", 'q_ekon_stopien',
     {'Poniżej 50%': 0, '50-70%': 1, '70-85%': 2, 'Powyżej 85%': 3},
-    {0: [0], 1: [1], 2: [2,3], 3: [4,5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 18
     ("Ile wynosi całkowita wartość kar pieniężnych poniesionych przez firmę w związku z nieprzestrzeganiem obowiązujących przepisów i regulacji?", 'q_ekon_kary',
     {'Powyżej 20 000zł': 0, '5 000-20 000zł': 1, '0-5 000zł': 2, '0zł': 3},
-    {0: [0], 1: [1,2], 2: [3,4], 3: [4,5]}, ekonomiczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     # --- OBSZAR: SPOŁECZNY ---
     #Pytanie 19
@@ -219,7 +219,7 @@ pytania_data = [
     'Organizacja deklaruje zamiar opracowania procedur dotyczących przeciwdziałania dyskryminacji i mobbingowi.': 1,
     'Procedury dotyczące przeciwdziałania dyskryminacji i mobbingowi znajdują się w trakcie opracowywania.': 2,
     'Organizacja posiada wdrożone procedury, monitoruje zgłoszone incydenty oraz podejmuje, monitoruje i raportuje działania naprawcze.': 3},
-    {0: [0], 1: [1], 2: [2], 3: [3,4,5]}, spoleczny),
+    {0: [0], 1: [1], 2: [2], 3: [5]}, spoleczny),
 
     #Pytanie 20
     ("W jakim stopniu organizacja dba o dogodne warunki pracy poprzez zapewnianie i promowanie świadczeń pozapłacowych dla pracowników (np. opieka zdrowotna, ubezpieczenie na życie, urlopy rodzicielskie)?", 'q_ekon_swiadczenia',
@@ -227,7 +227,7 @@ pytania_data = [
     'Organizacja prowadzi działania informacyjne i edukacyjne w zakresie świadczeń pracowniczych, jednak bez spójnej polityki ich stosowania.': 1,
     'Organizacja zapewnia podstawowe świadczenia pozapłacowe pracownikom oraz respektuje standardy dotyczące czasu pracy i odpoczynku.': 2,
     'Organizacja nie tylko stosuje dobre praktyki w zakresie świadczeń i warunków pracy, ale również aktywnie promuje je jako wzór dla innych podmiotów.': 3},
-    {0: [0], 1: [1], 2: [2,3,4], 3: [5]}, spoleczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, spoleczny),
 
     #Pytanie 21
     ("Czy w organizacji realizowane są działania z zakresu wolontariatu pracowniczego i jak często one występują?", 'q_ekon_wolontariat',
@@ -236,14 +236,14 @@ pytania_data = [
     'Organizacja okazjonalnie (np. raz w roku na święta) realizuje działania z zakresu wolontariatu pracowniczego.': 2,
     'Organizacja realizuje wolontariat pracowniczy okazjonalnie (więcej niż raz w roku).': 3,
     'Organizacja regularnie i systematycznie realizuje działania z zakresu wolontariatu pracowniczego, aktywnie angażując pracowników.': 4},
-    {0: [0], 1: [1], 2: [2,3], 3: [3,4], 4: [5]}, spoleczny),
+    {0: [0], 1: [1], 2: [3], 3: [3], 4: [5]}, spoleczny),
 
     #Pytanie 22
     ("Jak dostępne dla klientów są informacje o składzie produktu, jego bezpieczeństwie oraz wpływie na środowisko, w tym emisji gazów cieplarnianych, biodegradowalności, możliwości recyklingu i trwałości?", 'q_ekon_sklad',
     {'Takie informacje nie są udostępniane klientom.': 0,
     'Informacje te są dostępne w sposób pośredni lub ograniczony, np. w regulaminach, dokumentach technicznych lub innych źródłach.': 1,
     'Informacje te są łatwo dostępne i jasno komunikowane klientom, np. na stronie internetowej, opakowaniu produktu lub w materiałach informacyjnych.': 2},
-    {0: [0,1], 1: [2,3], 2: [4,5]}, spoleczny),
+    {0: [0,1], 1: [3], 2: [5]}, spoleczny),
 
     #Pytanie 23
     ("Jaki odsetek partnerów biznesowych stosuje zasady społecznej odpowiedzialności biznesu (CSR), potwierdzone pozytywnym wynikiem audytu etycznego?", 'q_ekon_partner',
@@ -252,7 +252,7 @@ pytania_data = [
     'Pozytywny wynik audytu etycznego dotyczy mniej niż 20% współpracujących podmiotów.': 2,
     'Pozytywny wynik audytu etycznego dotyczy 20-50% współpracujących podmiotów.': 3,
     'Większość (powyżej 50%) partnerów biznesowych przeszła pozytywny audyt etyczny i stosuje zasady CSR.': 4},
-    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4,5]}, spoleczny),
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [5]}, spoleczny),
 
     #Pytanie 24
     ("Ile wynosi poziom wypadkowości w pracy oraz w jakim stopniu wskaźniki te są monitorowane i redukowane?", 'q_ekon_wypadkowosc',
@@ -285,12 +285,12 @@ pytania_data = [
     #Pytanie 28
     ("Jaki procent wynagrodzeń w organizacji jest wypłacany terminowo w stosunku do wszystkich realizowanych wypłat?", 'q_ekon_procent',
     {'Poniżej 90%': 0, '90-95%': 1, '95-98%': 2, '98-100%': 3, '100%': 4},
-    {0: [0], 1: [1], 2: [2,3], 3: [4], 4: [5]}, spoleczny),
+    {0: [0], 1: [1], 2: [3], 3: [4], 4: [5]}, spoleczny),
 
     #Pytanie 29
     ("Jaka jest procentowa różnica w wynagrodzeniu podstawowym pomiędzy kobietami a mężczyznami (gender pay gap)?", 'q_ekon_roznica',
     {'Powyżej 20%': 0, '20-13%': 1, '13-7%': 2, '7-2%': 3, 'Poniżej 2%': 4},
-    {0: [0], 1: [1], 2: [2], 3: [3,4], 4: [5]}, spoleczny),
+    {0: [0], 1: [1], 2: [2], 3: [4], 4: [5]}, spoleczny),
 
     #Pytanie 30
     ("Jaki procent pracowników organizacji objęty jest układami zbiorowymi pracy lub innymi formalnymi sposobami reprezentacji pracowniczej?", 'q_ekon_uklad',
@@ -305,13 +305,13 @@ pytania_data = [
     #Pytanie 32
     ("Jaki jest wskaźnik rotacji pracowników, rozumiany jako procent odejść pracowników w ciągu roku w stosunku do średniego stanu zatrudnienia?", 'q_ekon_rotacja',
     {'Powyżej 30%': 0, '30-20%': 1, '20-10%': 2, 'Poniżej 10%': 3},
-    {0: [0], 1: [1], 2: [2,3], 3: [4,5]}, spoleczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, spoleczny),
 
     #Pytanie 33
     ("Jaki jest wskaźnik konfliktowości, rozumiany jako liczba konfliktów w ciągu roku w stosunku do liczby zatrudnionych?", 'q_ekon_konflikty',
     {'Powyżej 0,3 oraz problemy w komunikacji i współpracy w zespole': 0, '0,3-0,2 oraz wysoki poziom konfliktów, organizacja doświadcza istotnych napięć wewnętrznych': 1,
     '0,2-0,1 oraz sporadyczne problemy w relacjach między pracownikami': 2, 'Poniżej 0,1 oraz dobra atmosfera pracy i współpraca w zespole': 3},
-    {0: [0], 1: [1], 2: [2,3], 3: [4,5]}, spoleczny),
+    {0: [0], 1: [1], 2: [3], 3: [5]}, spoleczny),
 
     #Pytanie 34
     ("Jaki jest poziom satysfakcji klientów (mierzony np. ankietami) wyrażony jako odsetek klientów zadowolonych lub bardzo zadowolonych?", 'q_ekon_satysfakcja',
@@ -325,7 +325,7 @@ pytania_data = [
     'Organizacja nie posiada jeszcze certyfikatu EMAS, jednak rozważa jego wdrożenie w przyszłości.': 1,
     'Organizacja znajduje się w trakcie procesu wdrażania systemu EMAS.': 2,
     'Organizacja posiada certyfikat EMAS i skutecznie stosuje jego wymagania w swojej działalności.': 3},
-    {0: [0], 1: [1], 2: [2,3,4], 3: [5]}, srodowiskowy)
+    {0: [0], 1: [1], 2: [3], 3: [5]}, srodowiskowy)
 ]
 
 # Tworzenie DataFrame z pytaniami
