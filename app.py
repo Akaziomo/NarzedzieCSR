@@ -3,7 +3,6 @@ import pandas as pd
 import time
 from typing import Dict, List, Any, Set
 
-
 # ----------------------------------------------------------------------
 # 0. FUNKCJE POMOCNICZE
 # ----------------------------------------------------------------------
@@ -35,7 +34,6 @@ def calculate_scores(pytania_df):
                 # Błąd w definicji pytania/odpowiedzi
                 pass
 
-
 def calculate_max_scores(pytania_df) -> Dict[int, int]:
     """
     Oblicza maksymalną liczbę pytań, które potencjalnie mogą aktywować każdy poziom P0-P5.
@@ -58,7 +56,6 @@ def calculate_max_scores(pytania_df) -> Dict[int, int]:
 
     # Zwracamy liczbę unikalnych pytań, które potencjalnie aktywują dany poziom
     return {p: len(questions) for p, questions in max_scores_tracker.items()}
-
 
 def go_to_test():
     st.session_state["page"] = "test"
@@ -103,18 +100,17 @@ ekonomiczny = "Ekonomiczny"
 srodowiskowy = "Środowiskowy"
 spoleczny = "Społeczny"
 
-# Zaktualizowana punktacja z [0] dla opcji aktywujących P0
 pytania_data = [
     # --- OBSZAR: EKONOMICZNY ---
     #Pytanie 1
     ("Jak często odbywają się audyty energetyczne?", 'q_ekon_audyty_e', 
-     {'Rzadziej niż co 4 lata': 0, 'Regularnie co 4 lata': 1, 'Częściej niż co 4 lata': 5}, 
-     {0: [0], 1: [3], 5: [5]}, ekonomiczny),
+     {'Rzadziej niż co 4 lata': 0, 'Regularnie co 4 lata': 1, 'Częściej niż co 4 lata': 2}, 
+     {0: [0], 1: [3], 2: [5]}, ekonomiczny),
 
     #Pytanie 2
     ("Jaka jest dostępność systemu operacyjnego firmy (taboru, maszyn, urządzeń)?", 'q_ekon_dostepnosc', 
-     {'Poniżej 90%': 0, '90-95%': 1, 'Powyżej 95%': 5}, 
-     {0: [0], 1: [3], 5: [5]}, ekonomiczny), # Poprawiono: było błąd w Twoim wklejonym kodzie [5] zamiast [5]
+     {'Poniżej 90%': 0, '90-95%': 1, 'Powyżej 95%': 2}, 
+     {0: [0], 1: [3], 2: [5]}, ekonomiczny),
     
     #Pytanie 3
     ("Czy w strukturach firmy istnienieje i funkcjonuje zespół ds. zrównoważonego rozwoju?", 'q_ekon_struktury',
@@ -123,7 +119,7 @@ pytania_data = [
     'Tak, zespół opracowuje, testuje oraz wdraża strategię zrównoważonego rozwoju w wybranych obszarach działalności firmy.': 2,
     'Tak, zespół integruje strategię zrównoważonego rozwoju we wszystkich obszarach funkcjonowania firmy.': 3,
     'Tak, zespół skutecznie i konsekwentnie realizuje zintegrowaną strategię, która jest w pełni wdrożona, monitorowana i stale doskonalona w całej organizacji.': 4},
-    {0: [0], 1:[1], 2:[2], 3:[3], 4:[5]}, ekonomiczny),
+    {0: [0], 1:[1], 2:[2], 3:[4], 4:[5]}, ekonomiczny),
 
     #Pytanie 4
     ("Jaki jest stosunek firmy do społecznej odpowiedzialności biznesu (CSR)?", 'q_ekon_csr',
@@ -147,12 +143,12 @@ pytania_data = [
     #Pytanie 6
     ("Czy zespół wykazuje myślenie strategiczne, kompetencje restrukturyzacyjne i zdolność do samorefleksja?", 'q_ekon_myslenie',
     {'Nie': 0, 'Tak': 1},
-    {0: [1], 1: [5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0 i P1, co jest nielogiczne. Poprawiono: {0: [0], 1: [1,2,3,4,5]} - ale trzymam Twoje
+    {0: [1], 1: [5]}, ekonomiczny),
     
     #Pytanie 7
     ("Czy odbywa się współpraca z różnymi podmiotami na poziomach regionalnym, krajowym i/lub międzynarodowym w celu doskonalenia zrównoważonych kompetencji?", 'q_ekon_podmioty',
     {'Nie': 0, 'Tak': 1},
-    {0: [0], 1: [5]}, ekonomiczny), # Opcja 'Nie' aktywuje P0-P4. To jest nietypowe, ale trzymam Twoje dane
+    {0: [0], 1: [5]}, ekonomiczny),
     
     #Pytanie 8
     ("Czy organizacja posiada certyfikat ISO 26000?", 'q_ekon_iso',
@@ -164,13 +160,13 @@ pytania_data = [
 
     #Pytanie 9
     ("Jaki procent kapitału firmy jest przeznaczany na inwestycje ekologiczne, wspierające lokalną społeczność, badania lub inne inicjatywy o charakterze społecznym i środowiskowym?", 'q_ekon_kapital',
-    {'0%': 0, 'Poniżej 5%': 1, '5-10%': 2, '10-15%': 3, 'Powyżej 15%': 4},
+    {'0%': 0, 'Poniżej 5%': 1, '5-9%': 2, '10-15%': 3, 'Powyżej 15%': 4},
     {0: [0], 1: [1], 2: [3], 3: [4], 4: [5]}, ekonomiczny),
 
     #Pytanie 10
     ("Ile wynosi współczynnik zwrotów lub reklamacji w organizacji?", 'q_ekon_zwrot',
-    {'Powyżej 5%': 0, '1-5%': 1, '1-0,5%': 2, 'Poniżej 0,5%': 3},
-    {0: [0], 1: [1,2], 2: [3], 3: [5]}, ekonomiczny),
+    {'Powyżej 5%': 0, '1-5%': 1, '0,5-0,9%': 2, 'Poniżej 0,5%': 3},
+    {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 11
     ("Ile wynosi współczynnik kompletności zleceń (produkty lub usługi) w organizacji?", 'q_ekon_kompletnosc',
@@ -184,32 +180,32 @@ pytania_data = [
 
     #Pytanie 13
     ("Ile wynosi rentowność firmy rozumiana jako stosunek zysku netto do przychodów ze sprzedaży?", 'q_ekon_netto',
-    {'Poniżej 0%': 0, 'Poniżej 10%': 1, '10-13%': 2, '13-17%': 3, 'Powyżej 17%': 4},
+    {'0% lub poniżej': 0, 'Poniżej 10% ale więcej niż 0%': 1, '10-13%': 2, '14-17%': 3, 'Powyżej 17%': 4},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [5]}, ekonomiczny),
 
     #Pytanie 14
     ("Ile wynosi zwrot z inwestycji (ROI) z zielonych inwestycji, rozumiany jako stosunek zysku operacyjnego (lub wartości zatrzymanej) do wartości zainwestowanego kapitału?", 'q_ekon_ROI',
-    {'Poniżej 0%': 0, '0-5%': 1, '5-10%': 2, '10-15%': 3, 'Powyżej 15%': 4},
+    {'Poniżej 0%': 0, '0-4%': 1, '5-10%': 2, '11-15%': 3, 'Powyżej 15%': 4},
     {0: [0], 1: [1], 2: [2], 3: [4], 4: [5]}, ekonomiczny),
 
     #Pytanie 15
     ("Jaki poziom redukcji kosztów operacyjnych został osiągnięty dzięki inicjatywom oszczędnościowym i efektywnościowym (np. termomodernizacja, optymalizacja tras, redukcja zużycia energii)?", 'q_ekon_redukcja',
-    {'0% lub poniżej': 0, '0-3%': 1, '3-7%': 2, 'Powyżej 7%': 3},
+    {'0% lub poniżej': 0, '0-3%': 1, '4-7%': 2, 'Powyżej 7%': 3},
     {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 16
     ("Jaki procent dostawców/detalistów pochodzi z lokalnego otoczenia?", 'q_ekon_lokalni',
-    {'0%': 0, '0-15%': 1, '15-30%': 2, '30-50%': 3, 'Powyżej 50%': 4},
+    {'0%': 0, '0-15%': 1, '16-30%': 2, '31-50%': 3, 'Powyżej 50%': 4},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [5]}, ekonomiczny),
 
     #Pytanie 17
     ("Ile wynosi stopień wykorzystania zdolności, rozumiany jako stosunek wykorzystanej zdolności produkcyjnej, magazynowej lub urządzeń do ich nominalnych możliwościi?", 'q_ekon_stopien',
-    {'Poniżej 50%': 0, '50-70%': 1, '70-85%': 2, 'Powyżej 85%': 3},
+    {'Poniżej 50%': 0, '50-70%': 1, '71-85%': 2, 'Powyżej 85%': 3},
     {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     #Pytanie 18
     ("Ile wynosi całkowita wartość kar pieniężnych poniesionych przez firmę w związku z nieprzestrzeganiem obowiązujących przepisów i regulacji?", 'q_ekon_kary',
-    {'Powyżej 20 000zł': 0, '5 000-20 000zł': 1, '0-5 000zł': 2, '0zł': 3},
+    {'Powyżej 20 000zł': 0, '5 001-20 000zł': 1, '1-5 000zł': 2, '0zł': 3},
     {0: [0], 1: [1], 2: [3], 3: [5]}, ekonomiczny),
 
     # --- OBSZAR: SPOŁECZNY ---
@@ -266,66 +262,208 @@ pytania_data = [
 
     #Pytanie 25
     ("Jaka jest średnia liczba godzin szkoleń przypadająca rocznie na jednego pracownika?", 'q_ekon_szkolenia',
-    {'0-5 godzin szkoleń na pracownika rocznie.': 0, '5-10 godzin szkoleń na pracownika rocznie.': 1,
-    '10-20 godzin szkoleń na pracownika rocznie.': 2, '20-30 godzin szkoleń na pracownika rocznie.': 3,
-    '30-40 godzin szkoleń na pracownika rocznie.': 4, 'Powyżej 40 godzin szkoleń na pracownika rocznie.': 5},
+    {'0-5 godzin szkoleń na pracownika rocznie.': 0, '6-10 godzin szkoleń na pracownika rocznie.': 1,
+    '11-20 godzin szkoleń na pracownika rocznie.': 2, '21-30 godzin szkoleń na pracownika rocznie.': 3,
+    '31-40 godzin szkoleń na pracownika rocznie.': 4, 'Powyżej 40 godzin szkoleń na pracownika rocznie.': 5},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, spoleczny),
 
     #Pytanie 26
     ("Jaki procent pracowników podlega regularnym przeglądom wyników pracy oraz rozmowom dotyczącym rozwoju zawodowego i ścieżki kariery?", 'q_ekon_przeglad',
-    {'Poniżej 10%': 0, '10-20%': 1, '20-40%': 2, '40-60%': 3, '60-90%': 4, 'Powyżej 90%': 5},
+    {'Poniżej 10%': 0, '11-20%': 1, '21-40%': 2, '41-60%': 3, '61-90%': 4, 'Powyżej 90%': 5},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, spoleczny),
 
     #Pytanie 27
     ("Jaki jest poziom najniższego wynagrodzenia w organizacji w relacji do obowiązującej ustawowej płacy minimalnej?", 'q_ekon_wynagrodzenia',
     {'Równe lub niższe od ustawowej płacy minimalnej (≤ 100%).': 0, '100-110% ustawowej płacy minimalnej.': 1,
-    '110-130% ustawowej płacy minimalnej.': 2, 'Powyżej 130% ustawowej płacy minimalnej.': 3},
-    {0: [0], 1: [1,2], 2: [3,4], 3: [5]}, spoleczny),
+    '111-130% ustawowej płacy minimalnej.': 2, 'Powyżej 130% ustawowej płacy minimalnej.': 3},
+    {0: [0], 1: [1], 2: [3,4], 3: [5]}, spoleczny),
 
     #Pytanie 28
     ("Jaki procent wynagrodzeń w organizacji jest wypłacany terminowo w stosunku do wszystkich realizowanych wypłat?", 'q_ekon_procent',
-    {'Poniżej 90%': 0, '90-95%': 1, '95-98%': 2, '98-100%': 3, '100%': 4},
+    {'Poniżej 90%': 0, '90-94%': 1, '95-97%': 2, '98-100%': 3, '100%': 4},
     {0: [0], 1: [1], 2: [3], 3: [4], 4: [5]}, spoleczny),
 
     #Pytanie 29
     ("Jaka jest procentowa różnica w wynagrodzeniu podstawowym pomiędzy kobietami a mężczyznami (gender pay gap)?", 'q_ekon_roznica',
-    {'Powyżej 20%': 0, '20-13%': 1, '13-7%': 2, '7-2%': 3, 'Poniżej 2%': 4},
+    {'Powyżej 20%': 0, '13-20%': 1, '7-12%': 2, '2-6%': 3, 'Poniżej 2%': 4},
     {0: [0], 1: [1], 2: [2], 3: [4], 4: [5]}, spoleczny),
 
     #Pytanie 30
     ("Jaki procent pracowników organizacji objęty jest układami zbiorowymi pracy lub innymi formalnymi sposobami reprezentacji pracowniczej?", 'q_ekon_uklad',
-    {'Poniżej 10%': 0, '10-30%': 1, '30-50%': 2, '50-70%': 3, '70-90%': 4, 'Powyżej 90%': 5},
+    {'Poniżej 10%': 0, '10-30%': 1, '31-50%': 2, '51-70%': 3, '71-90%': 4, 'Powyżej 90%': 5},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, spoleczny),
 
     #Pytanie 31
     ("Ile procent z przychodów firmy jest przeznaczane na działania społeczne lub charytatywne (np. darowizny, sponsoring, projekty edukacyjne)?", 'q_ekon_przychody',
-    {'Poniżej 0,01%': 0, '0,01-0,05%': 1, '0,05-0,1%': 2, '0,1-0,3%': 3, '0,3-0,5%': 4, 'Ponad 0,5%': 5},
+    {'Poniżej 0,01%': 0, '0,01-0,05%': 1, '0,06-0,1%': 2, '0,11-0,3%': 3, '0,31-0,5%': 4, 'Ponad 0,5%': 5},
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, spoleczny),
 
     #Pytanie 32
     ("Jaki jest wskaźnik rotacji pracowników, rozumiany jako procent odejść pracowników w ciągu roku w stosunku do średniego stanu zatrudnienia?", 'q_ekon_rotacja',
-    {'Powyżej 30%': 0, '30-20%': 1, '20-10%': 2, 'Poniżej 10%': 3},
+    {'Powyżej 30%': 0, '20-29%': 1, '11-19%': 2, 'Poniżej 10%': 3},
     {0: [0], 1: [1], 2: [3], 3: [5]}, spoleczny),
 
     #Pytanie 33
-    ("Jaki jest wskaźnik konfliktowości, rozumiany jako liczba konfliktów w ciągu roku w stosunku do liczby zatrudnionych?", 'q_ekon_konflikty',
-    {'Powyżej 0,3 oraz problemy w komunikacji i współpracy w zespole': 0, '0,3-0,2 oraz wysoki poziom konfliktów, organizacja doświadcza istotnych napięć wewnętrznych': 1,
-    '0,2-0,1 oraz sporadyczne problemy w relacjach między pracownikami': 2, 'Poniżej 0,1 oraz dobra atmosfera pracy i współpraca w zespole': 3},
-    {0: [0], 1: [1], 2: [3], 3: [5]}, spoleczny),
-
-    #Pytanie 34
     ("Jaki jest poziom satysfakcji klientów (mierzony np. ankietami) wyrażony jako odsetek klientów zadowolonych lub bardzo zadowolonych?", 'q_ekon_satysfakcja',
-    {'Poniżej 50%': 0, '50-65%': 1, '60-75%': 2, '75-85%': 3, 'Powyżej 85%': 4},
-    {0: [0], 1: [1], 2: [2,3], 3: [4], 4: [5]}, spoleczny),
+    {'Poniżej 50%': 0, '50-65%': 1, '66-75%': 2, '76-85%': 3, 'Powyżej 85%': 4},
+    {0: [0], 1: [1], 2: [3], 3: [4], 4: [5]}, spoleczny),
 
     # --- OBSZAR: ŚRODOWISKOWY ---
-    #Pytanie 35
+    #Pytanie 34
     ("Czy organizacja posiada certyfikat EMAS (Eco-Management and Audit Scheme)?", 'q_ekon_EMAS',
     {'Organizacja nie posiada certyfikatu EMAS ani nie planuje przystąpienia do tego systemu.': 0,
     'Organizacja nie posiada jeszcze certyfikatu EMAS, jednak rozważa jego wdrożenie w przyszłości.': 1,
     'Organizacja znajduje się w trakcie procesu wdrażania systemu EMAS.': 2,
     'Organizacja posiada certyfikat EMAS i skutecznie stosuje jego wymagania w swojej działalności.': 3},
-    {0: [0], 1: [1], 2: [3], 3: [5]}, srodowiskowy)
+    {0: [0], 1: [1], 2: [3], 3: [5]}, srodowiskowy),
+
+    #Pytanie 35
+    ("Czy organizacja posiada certyfikat ISO 14001?", 'q_ekon_14001',
+    {'Organizacja nie posiada certyfikatu ISO 14001 ani nie planuje wdrożenia wytycznych tej normy.': 0,
+    'Organizacja nie posiada jeszcze certyfikatu ISO 14001, jednak rozważa jego wdrożenie w przyszłości.': 1,
+    'Organizacja znajduje się w trakcie procesu wdrażania wytycznych normy ISO 14001.': 2,
+    'Organizacja posiada certyfikat ISO 14001 lub w pełni i skutecznie wdrożyła wytyczne tej normy w swojej działalności.': 3},
+    {0: [0], 1: [1], 2: [3], 3: [5]}, srodowiskowy),
+
+    #Pytanie 36
+    ("Jak często odbywają się kontrole lub audyty środowiskowe?", 'q_ekon_audyty_czestosc',
+    {'Rzadziej niż co 4 lata.': 0, 'Co 4 lata.': 3, 'Co 3 lata.': 4, 'Co 2 lata lub częściej.': 5},
+    {0: [0], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 37
+    ("Czy firma realizuje działania kompensujące polegające na sadzeniu drzew (samodzielnie lub poprzez współpracę z fundacjami, samorządami lub partnerami zewnętrznymi)?", 'q_ekon_sadzenie_drzew',
+    {'Nie, firma nie realizuje żadnych działań związanych z sadzeniem drzew ani kompensacją przyrodniczą.': 0,
+    'Jednorazowa lub okazjonalna akcja sadzenia drzew (do 100 drzew rocznie).': 1,
+    'Regularne działania (co najmniej raz w roku), obejmujące 101–500 drzew rocznie.': 2,
+    'Sadzenie drzew jest elementem polityki CSR lub środowiskowej, firma sadzi 501–2 000 drzew rocznie.': 3,
+    'Firma realizuje długofalowy program kompensacji środowiskowej, sadząc 2 001–10 000 drzew rocznie.': 4,
+    'Firma sadzi ponad 10 000 drzew rocznie, angażuje pracowników i partnerów biznesowych oraz publicznie raportuje mierzalne efekty.': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 38
+    ("Jaki procent wszystkich realizowanych dostaw odbywa się z wykorzystaniem transportu kolejowego, wodnego śródlądowego lub rozwiązań intermodalnych (co najmniej jeden ekologiczny środek transportu w łańcuchu dostawy)?", 'q_ekon_transport_intermodal',
+    {'0%': 0, '1-5%': 1, '6-15%': 2, '16-30%': 3, '31-50%': 4, 'Powyżej 50%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 39
+    ("W jakim stopniu firma ogranicza pobór wody i zamyka obieg wody w procesach czyszczących (np. mycie pojazdów, kontenerów, palet, powierzchni magazynowych), biorąc pod uwagę całkowity pobór wody, całkowity zrzut wody oraz działania w zakresie recyklingu lub ponownego użycia wody?", 'q_ekon_obieg_wody',
+    {'Firma nie monitoruje poboru ani zrzutu wody. Cała zużyta woda po procesach czyszczących jest odprowadzana do kanalizacji lub środowiska bez ponownego użycia.': 0,
+    'Firma monitoruje całkowity pobór wody, jednak nie stosuje rozwiązań umożliwiających ponowne wykorzystanie wody lub udział wody odzyskanej wynosi do 5%.': 1,
+    'Firma wdraża podstawowe rozwiązania oszczędzające wodę (np. separatory, filtry, myjki niskociśnieniowe), a 6–20% wody z procesów czyszczących jest wykorzystywane ponownie.': 2,
+    'Firma posiada zorganizowany system obiegu zamkniętego lub półzamkniętego, 21–40% wody jest odzyskiwane i ponownie wykorzystywane': 3,
+    'Firma stosuje zaawansowane systemy recyklingu wody (np. wielostopniowa filtracja, oczyszczanie biologiczne) i ponad 41% wody jest ponownie używane.': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 5: [5]}, srodowiskowy),
+
+    #Pytanie 40
+    ("Czy przy projektowaniu wyrobów oferowanych lub wykorzystywanych przez firmę (np. opakowań, wyposażenia) uwzględnia się zasady ekologicznej konstrukcji, takie jak ograniczanie substancji toksycznych, ułatwiony demontaż, zwiększona trwałość oraz możliwość recyklingu?", 'q_ekon_ecodesign',
+    {'Firma nie uwzględnia aspektów ekologicznych przy projektowaniu wyrobów.': 0,
+    'Firma uwzględnia podstawowe zasady ekologicznej konstrukcji, jednak bez formalnej polityki (np. wybór trwalszych materiałów, ograniczenie materiałów niebezpiecznych).': 2,
+    'Firma posiada formalną politykę lub wytyczne eco-design, a rozwiązania ekologiczne są standardem in projektowaniu większości wyrobów.': 4,
+    'Firma projektuje wyroby zgodnie z zaawansowanymi zasadami gospodarki o obiegu zamkniętym (np. modułowość, projektowanie pod ponowne użycie), a dobre praktyki są komunikowane partnerom i klientom.': 5},
+    {0: [0], 2: [2], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 41
+    ("Jaki procent wyrobów jest wykonywany z materiałów z odzysku, liczony jako stusunek wagi materiałów z recyklingu do całkowitej wagi zużytych materiałów?", 'q_ekon_materialy_z_odzysku',
+    {'Poniżej 10%': 0, '10-19%': 1, '20-39%': 2, '40-54%': 3, '55-70%': 4, 'Powyżej 70%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 42
+    ("Jaki procent odpadów jest pooddawany recyklingowi?", 'q_ekon_odpady_recykling',
+    {'0%': 0, '1%-34%': 1, '35-49%': 2, '50-69%': 3, '70-85%': 4, 'Powyżej 85%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 43
+    ("W jaki sposób firma monitoruje, raportuje oraz ogranicza całkowitą emisję gazów cieplarnianych (GHG) z transportu (CO₂, CH₄, N₂O, HFC, PFC, SF₆, NF₃)?", 'q_ekon_emisje_ghg',
+    {'Firma nie oblicza ani nie monitoruje emisji GHG z transportu.': 0,
+    'Firma oblicza całkowitą emisję GHG z transportu, lecz działania maja charakter tylko sprawozdawczy.': 2,
+    'Firma regularnie monitoruje emisję GHG z transportu, analizuje jej zmiany w czasie oraz podejmuje działania ograniczające (np. optymalizacja tras, szkolenia eco-driving).': 4,
+    'Firma osiąga mierzalne i systematyczne redukcje emisji GHG z transportu, obejmuje analizą pełen zakres istotnych emisji, wdraża innowacyjne rozwiązania i publicznie raportuje wyniki.': 5},
+    {0: [0], 2: [2], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 44
+    ("Ile wynosi udział paliw ze źródeł nieodnawialnych (np. olej napędowy, benzyna, LPG) w stosunku do całkowite zużycia paliw w firmie?", 'q_ekon_paliwa_nieodnawialne',
+    {'Firma nie monitoruje struktury zużycia paliw lub nie rozróżnia paliw odnawialnych i nieodnawialnych.': 0,
+    'Powyżej 95%': 1, '81-95%': 2, '61-80%': 3, '50-60%': 4, 'Poniżej 50%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 45
+    ("Czy firma produkuje energię z odnawialnych źródeł (np. fotowoltaika, biomasa, geotermia, wiatr) na potrzeby własnej działalności i jaki był jej udział w całkowitym zużyciu energii?", 'q_ekon_oze_produkcja',
+    {'Firma nie monitoruje zużycia energii i nie prowadzi własnej produkcji energii z OZE.': 0,
+    'Firma monitoruje zużycie energii, lecz nie produkuje energii z OZE i nie planuje jej uruchomienia.': 1,
+    'Firma nie produkuje jeszcze energii z OZE, ale posiada konkretne plany inwestycyjne lub rozpoczęte projekty.': 2,
+    'Firma produkuje energię z OZE, która pokrywa do 10% całkowitego zapotrzebowania energetycznego.': 3,
+    'Firma produkuje energię z OZE pokrywającą 11–40% zapotrzebowania energetycznego.': 4,
+    'Firma produkuje energię z OZE pokrywającą ponad 40% zapotrzebowania energetycznego.': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 46
+    ("W jaki sposób firma monitoruje, analizuje i ogranicza całkowitą ilość wytwarzanych odpadów v swojej działalności operacyjnej (transport, magazynowanie, biura, utrzymanie floty)?", 'q_ekon_odpady_monitoring',
+    {'Firma nie monitoruje ilości wytwarzanych odpadów i nie posiada danych dotyczących ich całkowitej wagi.': 0,
+    'Firma monitoruje całkowitą wagę wytwarzanych odpadów, jednak dane nie są wykorzystywane do planowania działań ograniczających.': 2,
+    'Firma regularnie analizuje wagę wytwarzanych odpadów i podejmuje działania mające na celu ich ograniczenie (np. redukcja odpadów opakowaniowych, ponowne użycie materiałów).': 4,
+    'Firma systemowo minimalizuje ilość wytwarzanych odpadów, osiąga mierzalne redukcje masy odpadów w czasie oraz wdraża rozwiązania zgodne z gospodarką o obiegu zamkniętym.': 5},
+    {0: [0], 2: [2], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 47
+    ("Ile wynosi udział pustych przebiegów (przejazdów bez ładunku) w stosunku do całkowitej liczby kilometrów przejechanych przez tabor firmy?", 'q_ekon_puste_przebiegi',
+    {'Firma nie monitoruje pustych przebiegów lub ich udział wynosi ponad 40%.': 0,
+    '31-40%': 1, '21-30%': 2, '11-20%': 3, '5-10%': 4, 'Poniżej 5%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 48
+    ("Jaki procent całkowitego oświetlenia wykorzystywanego w obiektach firmy (magazyny, terminale, biura, place manewrowe) stanowi energooszczędne oświetlenie LED?", 'q_ekon_led_oswietlenie',
+    {'Firma nie monitoruje rodzaju stosowanego oświetlenia lub udział oświetlenia LED jest niższy niż 10%.': 0,
+    '10-25%': 1, '26-50%': 2, '51-75%': 3, '76-95%': 4, 'Powyżej 95%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 49
+    ("Na jakim etapie jest ustanawianie i wdrażanie wymiernych celów, zadań i strategii, by reagować na negatywne skutki dla środowiska związane z działalnością, produktami i usługami przedsiębiorstwa?", 'q_ekon_strategia_cele',
+    {'Nie ma planów aby określić i wprowadzić takich celów, zadań i strategii/ nie pracuje się z nimi': 0,
+    'Są one określane/ niedługo będą wprowadzane': 1, 'Rozpoczęto ich wprowadzanie': 2,
+    'Są świeżo wprowadzone/ niedługo będzie ich pierwsze podsumowanie': 4,
+    'Są one ustanowione, wprowadzone, realizowane i regularnie podsumowywane': 5},
+    {0: [0], 1: [1], 2: [2], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 50
+    ("Czy organizacja identyfikuje i ocenia negatywne skutki dla środowiska związane z jej działalnością, produktami lub usługami?", 'q_ekon_identyfikacja_negatywna',
+    {'Nie i nie jest to planowane': 0, 'Nie, ale przygotowanie takiej analizy jest w trakcie': 1,
+    'Tak, powstała pierwsza taka analiza/ kiedyś powstała taka analiza, ale jest już nieaktualna': 2,
+    'Tak, taka analiza istnieje, jest aktualna i odpowiednio szczegółowa': 5},
+    {0: [0], 1: [1], 2: [2], 5: [5]}, srodowiskowy),
+
+    #Pytanie 51
+    ("Czy organizacja zapewnienia, wtedy gdy jest to konieczne, odpowiednie działania zaradcze w odpowiedzi na negatywne skutki dla środowiska, powstałe w wyniku działalności przedsiębiorstwa lub do których przedsiębiorstwo się przyczyniło?", 'q_ekon_dzialania_zaradcze',
+    {'Nie i nie ma planów aby to wprowadzić': 0, 'Nie, ale jest to w trakcie wprowadzania': 1,
+    'Tak, ale od niedawna': 3, 'Tak, za każdym razem': 5},
+    {0: [0], 1: [1], 3: [3], 5: [5]}, srodowiskowy),
+
+    #Pytanie 52
+    ("Czy przedsiębiorstwo jest zaangażowane we współpracę w ramach środków zaradczych oraz używa siły oddziaływania przedsiębiorstwa w odniesieniu do innych podmiotów powodujących lub przyczyniających się do negatywnych skutków dla środowiska w celu uruchomienia odpowiednich działań zaradczych?", 'q_ekon_wspolpraca_srodowisko',
+    {'Nie i nie ma planów aby to wprowadzić': 0, 'Nie, ale jest to w trakcie wprowadzania': 1,
+    'Tak, ale od niedawna': 3, 'Tak, większość z tych sytuacji': 4, 'Tak, za każdym razem': 5},
+    {0: [0], 1: [1], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 53
+    ("Czy organizacja posiada awaryjne plany działania służące zapobieganiu poważnym szkodom dla środowiska i zdrowia wynikającym z działalności przedsiębiorstwa, łagodzeniu takich szkód i ich kontrolowaniu, w tym wypadków i sytuacji awaryjnych, i czy posiada mechanizmy natychmiastowego zgłaszania takich sytuacji właściwym organom?", 'q_ekon_awaryjne_plany',
+    {'Nie': 0, 'Tak, ale są one niedokładne lub przestarzałe': 3,
+    'Tak i są one aktualne, spisane i dostępne dla osób odpowiedzialnych za wdrożenie takich planów': 5},
+    {0: [0], 3: [3], 5: [5]}, srodowiskowy),
+
+    #Pytanie 54
+    ("Czy organizacja nieustannie dąży do poprawy efektywności w obszarze ochrony środowiska na poziomie przedsiębiorstwa?", 'q_ekon_ciagla_poprawa',
+    {'Nie': 0, 'Jest w trakcie wprowadzania takiego postępowania': 1,
+    'Tak, ale nie jest to robione z największym możliwym zaangażowaniem': 3, 'Tak': 5},
+    {0: [0], 1: [1], 3: [3], 5: [5]}, srodowiskowy),
+
+    #Pytanie 55
+    ("Jaki procent produktów lub usług, które organizacja tworzy i dostarcza nie powoduje nieodpowiedniego oddziaływania na środowisko, jest bezpieczny, jeśli użytkowany zgodnie z przeznaczeniem, jest trwały, i jeśli możliwe nadaje się do naprawy?", 'q_ekon_produkty_bezpieczne',
+    {'0-50%': 0, '51-88%': 1, '89-91%': 2, '92-94%': 3, '95-97%': 4, '98-100%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
+
+    #Pytanie 56
+    ("Jaki procent pruduktów może być ponownie wykorzystany, poddany recyklingowi lub bezpiecznie zutylizowany i jest wytwarzany w sposób przyjazny dla środowiska?", 'q_ekon_produkty_oze_recykling',
+    {'0-20%': 0, '21-39%': 1, '40-69%': 2, '70-79%': 3, '80-89%': 4, '90-100%': 5},
+    {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
 ]
 
 # Tworzenie DataFrame z pytaniami
@@ -349,15 +487,6 @@ poziomy_nazwy = {
     3: "P3: Integracja", 
     4: "P4: Dojrzałość", 
     5: "P5: Innowacyjne Przywództwo"
-}
-
-poziomy_opisy = {
-    0: "W firmie nie istnieją formalne struktury ani działania mające na celu zarządzanie zrównoważonym rozwojem i CSR. Działania, jeśli występują, są incydentalne i nieskoordynowane. Konieczne jest powołanie zespołu i podjęcie wstępnych działań.",
-    1: "Firma ma wstępną świadomość potrzeby działań CSR. Powołano pojedyncze inicjatywy lub zespół, ale brakuje systematyczności i jasno określonych celów. Wskaźniki ekonomiczne i operacyjne są niskie lub na poziomie podstawowym.",
-    2: "W firmie rozpoczęto proces formalizacji działań i optymalizacji procesów. Funkcjonuje zespół, a podstawowe wskaźniki efektywności i CSR są monitorowane. Konieczna jest pełna integracja i ukierunkowanie na cele prośrodowiskowe/społeczne.",
-    3: "Zrównoważony rozwój jest częściowo zintegrowany z procesami operacyjnymi i celami (np. cele dotyczące rentowności, zwrotów, optymalizacji). Firma osiąga stabilne, choć umiarkowane, wyniki w kluczowych wskaźnikach ekonomicznych i operacyjnych. Czas na zwiększenie inwestycji w zrównoważony rozwój.",
-    4: "Dojrzałe zarządzanie CSR. Zrównoważony rozwój jest elementem strategii, a monitoring postępów jest systematyczny. Firma aktywnie dąży do ciągłej poprawy we wskaźnikach ekonomicznych i organizacyjnych (wysoka rentowność, niska awaryjność, wdrożone ISO).",
-    5: "Firma jest liderem w dziedzinie zrównoważonej logistyki. Innowacyjne praktyki są integralną częścią działalności. Osiągane są najlepsze wyniki we wszystkich kluczowych wskaźnikach (ponad 99% kompletności/terminowości, wysoka rentowność, pełna współpraca strategiczna). Przekłada się to na przewagę rynkową i budowanie silnej pozycji marki."
 }
 
 # ----------------------------------------------------------------------
@@ -468,23 +597,18 @@ elif st.session_state["page"] == "test":
 # 3. STRONA Z WYNIKAMI
 elif st.session_state["page"] == "results":
     
-    st.header("Wynik Oceny i Rekomendacje")
-    
     wyniki_poziomow = st.session_state.wyniki_poziomow
 
     # ----------------------------------------------------------------------
-    # NOWA LOGIKA OKREŚLANIA DOMINUJĄCEGO POZIOMU (SKIP ZEROWYCH PUNKTÓW)
+    # LOGIKA OKREŚLANIA DOMINUJĄCEGO POZIOMU
     # ----------------------------------------------------------------------
     
-    dominujacy_poziom = 0 # Domyślnie
+    dominujacy_poziom = 0
     
-    # 1. Sprawdzenie Reguły P0: Jeśli P0 aktywowane choć raz, poziom to P0.
     if wyniki_poziomow.get(0, 0) > 0:
         dominujacy_poziom = 0
-    
-    # 2. Jeśli P0 jest 0%, szukamy najwyższego poziomu.
+
     else:
-        # A. Najpierw sprawdzamy pełne osiągnięcia (100% kaskady)
         osiagniety_poziom_100 = 0
         poziomy_do_testowania = [1, 2, 3, 4, 5]
         
@@ -500,12 +624,10 @@ elif st.session_state["page"] == "results":
                 osiagniety_poziom_100 = poziom_id 
             else:
                 break 
-        
-        # B. Jeśli osiągnięto 100% na jakimś poziomie (osiagniety_poziom_100 > 0), to on jest dominujący
+
         if osiagniety_poziom_100 > 0:
             dominujacy_poziom = osiagniety_poziom_100
         
-        # C. Jeśli nie osiągnięto 100% na żadnym poziomie (nawet na P1), szukamy pierwszego poziomu > 0
         else:
             poziomy_do_testowania_od_1 = [1, 2, 3, 4, 5]
             pierwszy_poziom_z_punktami = 0
@@ -515,35 +637,15 @@ elif st.session_state["page"] == "results":
                 
                 if aktualne_pkt > 0:
                     pierwszy_poziom_z_punktami = poziom_id
-                    break # Znaleziono pierwszy poziom z punktami > 0
+                    break
             
-            # Jeśli znaleziono, to on jest dominujący (zgodnie z życzeniem)
             if pierwszy_poziom_z_punktami > 0:
                  dominujacy_poziom = pierwszy_poziom_z_punktami
             else:
-                 # To się zdarzy, gdy P0=0 i P1, P2...P5 są równe 0. 
-                 # Wtedy zostajemy na domyślnym P0, ale to jest niemożliwe 
-                 # w tym bloku kodu (bo P0 ma 0, więc minimum to P1, ale P1 ma 0).
-                 # Logicznie, powinniśmy wrócić do P0, ale zakładam, że 
-                 # jeśli P0 = 0 i wszystkie inne = 0, to P0 jest dominujące
-                 # (choć to sprzeczne z regułą P0=0%). Ustawiam P1 jako minimum
-                 # jeśli P0=0 i wszystkie inne są 0, to jest logicznie niekonsekwentne.
-                 # Na potrzeby tego kodu - zostawiam 0 jako domyślny.
-                 # Poprawka: W przypadku, gdy P0=0 i wszystkie inne Pn=0, 
-                 # przyjmiemy P0, aby nie fałszować wyniku.
                  dominujacy_poziom = 0
-                 # LUB: Wrócić do pierwotnej logiki: pierwszy nie-100% to dominujący
-                 # Ostatecznie: zostawiamy to jako 0, jeśli nie ma żadnych punktów.
 
     # ----------------------------------------------------------------------
     
-    st.success(f"**Osiągnięty Poziom Dojrzałości:** {poziomy_nazwy[dominujacy_poziom]}")
-    
-    # WYJAŚNIENIE OSIĄGNIĘTEGO POZIOMU
-    st.markdown(f"**Opis:** {poziomy_opisy[dominujacy_poziom]}")
-
-    st.markdown("---")
-
     # 1. Tworzenie DataFrame z wynikami
     df_wyniki = pd.DataFrame(
         list(wyniki_poziomow.items()), 
@@ -554,22 +656,75 @@ elif st.session_state["page"] == "results":
     
     df_wyniki = df_wyniki[['Poziom_ID', 'Poziom', 'Suma Punktów', 'Procent Osiągnięcia']]
     
-    # 2. Generowanie Inteligentnego Podsumowania (Wnioski i Rekomendacje)
-    st.subheader("Wnioski i Rekomendacje:")
-    
-    if dominujacy_poziom == 0:
-        st.write("Brak formalnych struktur i mierników wskazuje na **brak wdrożonego CSR**. Rekomendacja: Należy jak najszybciej powołać zespół ds. zrównoważonego rozwoju i podjąć wstępne działania, aby osiągnąć **Poziom 1 (Wczesny Rozwój)**.")
-    elif dominujacy_poziom == 1:
-        st.write("Organizacja wykazuje wstępną świadomość. Rekomendacja: Należy sformalizować działania poprzez testowanie rozwiązań, inicjowanie pierwszych działań CSR oraz dążenie do stabilizacji podstawowych wskaźników operacyjnych, aby osiągnąć **Poziom 2 (Transformacja)**.")
-    elif dominujacy_poziom == 2:
-        st.write("Powołano zespół i podjęto działania optymalizacyjne. Rekomendacja: Kluczowe jest **zintegrowanie** zrównoważonego rozwoju z celami operacyjnymi (np. wskaźniki zwrotów, ROI) oraz ukierunkowanie zespołu na wdrażanie strategii, aby osiągnąć **Poziom 3 (Integracja)**.")
-    elif dominujacy_poziom == 3:
-        st.write("Procesy są stabilne, a CSR jest częściowo zintegrowany. Rekomendacja: Należy zwiększyć zaangażowanie finansowe w inwestycje ekologiczne i społeczne, wdrożyć systemową optymalizację procesów oraz uzyskać certyfikaty potwierdzające dojrzałość, aby osiągnąć **Poziom 4 (Dojrzałość)**.")
-    elif dominujacy_poziom == 4:
-        st.write("Zrównoważony rozwój jest częścią strategii, a wyniki są wysokie. Rekomendacja: Należy dążyć do **Innowacyjnego Przywództwa (Poziom 5)** poprzez maksymalizację wszystkich wskaźników operacyjnych/ekonomicznych (np. >99% terminowości), aktywne promowanie zasad CSR na zewnątrz oraz nawiązanie współpracy na poziomie krajowym/międzynarodowym.")
-    elif dominujacy_poziom == 5: 
-        st.write("Gratulacje! Państwa firma jest innowatorem i liderem zrównoważonego rozwoju. Rekomendacja: Kontynuacja działań i wywieranie pozytywnego wpływu na cały łańcuch dostaw i otoczenie.")
+# 2. Generowanie Inteligentnego Podsumowania (Wnioski i Rekomendacje)
+    st.header("Wynik Oceny i Rekomendacje")
 
+    if dominujacy_poziom == 0:
+        st.error("### Poziom 0: Brak Formalnego CSR")
+        st.write("""
+        **Analiza:** Firma znajduje się na etapie reaktywnym, gdzie działania prospołeczne i prośrodowiskowe praktycznie nie występują. Brak monitoringu podstawowych wskaźników, takich jak rotacja pracowników czy zużycie mediów, generuje wysokie ryzyko operacyjne.
+        
+        **Kluczowe Rekomendacje:**
+        * **Zarządzanie:** Konieczne jest powołanie zespołu lub wyznaczenie osoby odpowiedzialnej za obszar zrównoważonego rozwoju.
+        * **Operacje:** Rozpoczęcie mierzenia podstawowych parametrów, takich jak terminowość i kompletność zleceń, aby ustabilizować fundamenty ekonomiczne.
+        * **Standardy:** Wprowadzenie elementarnych procedur antydyskryminacyjnych oraz monitorowanie terminowości wypłat wynagrodzeń.
+        """)
+
+    elif dominujacy_poziom == 1:
+        st.info("### Poziom 1: Wczesny Rozwój")
+        st.write("""
+        **Analiza:** Firma posiada wstępną świadomość potrzeby zmian, jednak podejmowane działania mają charakter rozproszony i okazjonalny. Wskaźniki rentowności zielonych inwestycji (ROI) oraz zaangażowanie w wolontariat pozostają na niskim poziomie.
+        
+        **Kluczowe Rekomendacje:**
+        * **Efektywność:** Skupienie się na redukcji pustych przebiegów oraz optymalizacji tras, co pozwoli na szybkie połączenie oszczędności z ochroną środowiska.
+        * **Edukacja:** Zwiększenie liczby godzin szkoleń przypadających na jednego pracownika (cel: powyżej 10h rocznie).
+        * **Strategia:** Rozważenie wdrożenia wytycznych normy ISO 26000, aby nadać działaniom CSR bardziej formalne ramy.
+        """)
+
+    elif dominujacy_poziom == 2:
+        st.info("### Poziom 2: Transformacja")
+        st.write("""
+        **Analiza:** Proces formalizacji działań został rozpoczęty. Firma monitoruje wagę wytwarzanych odpadów oraz zużycie wody, a w strukturach funkcjonuje już dedykowany zespół ds. zrównoważonego rozwoju.
+        
+        **Kluczowe Rekomendacje:**
+        * **Środowisko:** Przejście od pasywnego monitoringu do realnych modernizacji, np. poprzez zwiększenie udziału oświetlenia LED w obiektach powyżej 50%.
+        * **Społecznie:** Wdrożenie systematycznych przeglądów wyników pracy oraz rozmów o ścieżkach kariery dla co najmniej 40% personelu.
+        * **Łańcuch dostaw:** Rozpoczęcie weryfikacji dostawców pod kątem ich lokalizacji oraz stosowania przez nich zasad etyki biznesowej.
+        """)
+
+    elif dominujacy_poziom == 3:
+        st.warning("### Poziom 3: Integracja")
+        st.write("""
+        **Analiza:** Zasady CSR stają się integralną częścią procesów biznesowych. Firma osiąga stabilną rentowność netto (10-13%) i przeznacza wymierną część kapitału na inwestycje prośrodowiskowe.
+        
+        **Kluczowe Rekomendacje:**
+        * **Certyfikacja:** Uzyskanie certyfikatów ISO 14001 lub EMAS, co pozwoli na formalne potwierdzenie dojrzałości środowiskowej przed kontrahentami.
+        * **Ekoprojektowanie:** Wdrożenie zasad Eco-designu w odniesieniu do opakowań i procesów logistycznych, przy jednoczesnym zwiększeniu udziału materiałów z odzysku.
+        * **HR:** Podjęcie działań na rzecz redukcji luki płacowej (Gender Pay Gap) oraz regularne angażowanie pracowników w wolontariat.
+        """)
+
+    elif dominujacy_poziom == 4:
+        st.success("### Poziom 4: Dojrzałość")
+        st.write("""
+        **Analiza:** Firma wykazuje dojrzałe podejście do zarządzania. Wysoka efektywność operacyjna (terminowość >99%) idzie w parze z systemowym monitorowaniem emisji gazów cieplarnianych (GHG).
+        
+        **Kluczowe Rekomendacje:**
+        * **Energia:** Inwestycja we własne odnawialne źródła energii (OZE) z celem pokrycia powyżej 40% zapotrzebowania firmy.
+        * **Transport:** Zwiększenie udziału transportu intermodalnego lub niskoemisyjnego w całym łańcuchu dostaw powyżej progu 30%.
+        * **Raportowanie:** Wdrożenie pełnej transparentności wyników środowiskowych i społecznych w formie publicznych raportów okresowych.
+        """)
+
+    elif dominujacy_poziom == 5: 
+        st.success("### Poziom 5: Innowacyjne Przywództwo")
+        st.write("""
+        **Analiza:** Firma jest liderem i innowatorem w branży logistycznej. Osiągane wyniki, takie jak zerowa wypadkowość, minimalne puste przebiegi (<5%) oraz wysoki zwrot z zielonych inwestycji, stanowią wzorzec rynkowy.
+        
+        **Kluczowe Rekomendacje:**
+        * **Oddziaływanie:** Wywieranie wpływu na partnerów biznesowych poprzez obowiązkowe audyty etyczne i promowanie dobrych praktyk w całym sektorze.
+        * **Innowacje:** Współpraca z jednostkami badawczymi nad nowymi technologiami ograniczającymi wpływ logistyki na ekosystem.
+        * **Doskonalenie:** Utrzymanie pozycji lidera poprzez stałą aktualizację strategii względem najnowszych globalnych standardów ESG.
+        """)
+    
     st.markdown("---")
 
     # 3. Wyświetlenie punktacji w tabeli
@@ -587,11 +742,21 @@ elif st.session_state["page"] == "results":
                               dominant_level_id=dominujacy_poziom),
         hide_index=True
     )
-    
-    st.button("Wróć do Pytań / Wykonaj Nową Ocenę", 
-              on_click=go_to_test)
-    
+
+    # Wyjaśnienie punktacji
     st.markdown("---")
+    st.subheader("Jak liczony jest Twój wynik?")
+    st.info("""
+    Wynik analizy opiera się na modelu dojrzałości procesowej, który ocenia stopień zaangażowania firmy w zrównoważony rozwój według następujących zasad:
+
+    1. Każda udzielona odpowiedź jest przypisana do konkretnych poziomów zaawansowania (P0–P5). System zlicza aktywność firmy w każdym z tych poziomów niezależnie, co pozwala precyzyjnie określić profil organizacji.
+    
+    2. Procent widoczny w tabeli informuje, w jakim stopniu firma spełnia wymagania danego poziomu w odniesieniu do wszystkich możliwych do podjęcia działań w tym obszarze.
+    
+    3. * System wskazuje na najwyższy poziom, który firma zrealizowała w **100%**. Świadczy to o pełnej stabilności procesów na danym etapie.
+       * Jeśli system zidentyfikuje braki w Poziomie 0 (podstawowe wymogi prawne i etyczne), zostaje on uznany za poziom dominujący. Ma to na celu wskazanie priorytetowych obszarów do naprawy przed dalszym rozwojem.
+       * W przypadku braku pełnej realizacji któregokolwiek poziomu, wskazywany jest etap, na którym firma rozpoczęła aktywną transformację.
+    """)
     
     # Stopka z podpisami twórców
     st.markdown(f"""
