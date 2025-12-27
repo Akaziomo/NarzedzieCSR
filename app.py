@@ -3,6 +3,7 @@ import pandas as pd
 import time
 from typing import Dict, List, Any, Set
 
+
 # ----------------------------------------------------------------------
 # 0. FUNKCJE POMOCNICZE
 # ----------------------------------------------------------------------
@@ -34,6 +35,7 @@ def calculate_scores(pytania_df):
                 # Błąd w definicji pytania/odpowiedzi
                 pass
 
+
 def calculate_max_scores(pytania_df) -> Dict[int, int]:
     """
     Oblicza maksymalną liczbę pytań, które potencjalnie mogą aktywować każdy poziom P0-P5.
@@ -56,6 +58,7 @@ def calculate_max_scores(pytania_df) -> Dict[int, int]:
 
     # Zwracamy liczbę unikalnych pytań, które potencjalnie aktywują dany poziom
     return {p: len(questions) for p, questions in max_scores_tracker.items()}
+
 
 def go_to_test():
     st.session_state["page"] = "test"
@@ -747,15 +750,10 @@ elif st.session_state["page"] == "results":
     st.markdown("---")
     st.subheader("Jak liczony jest Twój wynik?")
     st.info("""
-    Wynik analizy opiera się na modelu dojrzałości procesowej, który ocenia stopień zaangażowania firmy w zrównoważony rozwój według następujących zasad:
-
-    1. Każda udzielona odpowiedź jest przypisana do konkretnych poziomów zaawansowania (P0–P5). System zlicza aktywność firmy w każdym z tych poziomów niezależnie, co pozwala precyzyjnie określić profil organizacji.
+    Narzędzie stosuje rygorystyczny mechanizm klasyfikacji, w którym wyższy poziom dojrzałości można osiągnąć wyłącznie pod warunkiem pełnego uporządkowania etapów niższych. W praktyce oznacza to, że:
     
-    2. Procent widoczny w tabeli informuje, w jakim stopniu firma spełnia wymagania danego poziomu w odniesieniu do wszystkich możliwych do podjęcia działań w tym obszarze.
-    
-    3. * System wskazuje na najwyższy poziom, który firma zrealizowała w **100%**. Świadczy to o pełnej stabilności procesów na danym etapie.
-       * Jeśli system zidentyfikuje braki w Poziomie 0 (podstawowe wymogi prawne i etyczne), zostaje on uznany za poziom dominujący. Ma to na celu wskazanie priorytetowych obszarów do naprawy przed dalszym rozwojem.
-       * W przypadku braku pełnej realizacji któregokolwiek poziomu, wskazywany jest etap, na którym firma rozpoczęła aktywną transformację.
+    * Kolejny poziom zostaje odblokowany tylko wtedy, gdy na wszystkich poziomach niższych wynik wynosi **0%** (czyli nie wybrano żadnej odpowiedzi przypisanej do niższej fazy rozwoju).
+    * Jeśli w kwestionariuszu wybrano choćby jedną odpowiedź przypisaną do poziomu niższego, system automatycznie uznaje ten najniższy poziom za dominujący, nawet jeśli pozostałe działania firmy są znacznie bardziej zaawansowane.
     """)
     
     # Stopka z podpisami twórców
