@@ -517,26 +517,21 @@ st.set_page_config(page_title="Narzędzie Oceny CSR w Logistyce", layout="wide")
 # 1. STRONA POWITALNA
 if st.session_state["page"] == "welcome":
     st.title("Narzędzie Oceny Procesów Logistycznych (CSR)")
-    st.header("Witaj w narzędziu do oceny dojrzałości CSR w logistyce!")
+    st.header("Witaj w narzędziu do oceny dojrzałości CSR w Twojej firmie!")
     
     st.markdown("""
-    To narzędzie zostało stworzone, aby pomóc przedsiębiorstwom logistycznym 
-    ocenić aktualny poziom zaangażowania w praktyki zrównoważonego rozwoju (CSR)
-    oraz zidentyfikować obszary do poprawy.
+    Zostało ono stworzone w postaci testu, który umożliwi przedsiębiorstwom realizującym procesy logistyczne łatwą ocenę aktualnego poziomu zaangażowania w praktyki społecznej odpowiedzialności biznesu (CSR).
+    Ułatwi on także identyfikację kluczowych obszarów wymagających poprawy w celu dalszego zrównoważonego rozwoju. 
     
-    
-
     ### Po co ten test?
-    1.  **Diagnoza:** Umożliwia szybką ocenę, na którym z 6 Poziomów Dojrzałości 
-        (od Poziomu 0: Brak Formalnego CSR, do Poziomu 5: Innowacyjne Przywództwo) 
-        znajduje się Twoja firma.
-    2.  **Rekomendacje:** Na podstawie odpowiedzi otrzymasz ukierunkowane zalecenia.
-    3.  **Edukacja:** Pogłębisz wiedze na temat kluczowych standardów.
+    1.  **Diagnoza:** Szybko dowiesz się, na którym z 6 Poziomów Dojrzałości znajduje się Twoja firma. 
+    2.  **Rekomendacje:** Na podstawie udzielonych odpowiedzi otrzymasz zalecenia specjalnie dobrane dla Twojego poziomu. 
+    3.  **Edukacja:** Pogłębisz wiedzę na temat najważniejszych, aktualnych praktyk i standardów w zakresie CSR. 
 
-    Proszę odpowiadać na pytania szczerze i zgodnie z aktualnym stanem w firmie.
+    Kwestionariusz zawiera ok. 50 pytań zamkniętych. Aby uzyskać rzetelny wynik, zaleca się odpowiadać na pytania szczerze i zgodnie z aktualnym stanem funkcjonowania firmy. Udzielone odpowiedzi i otrzymany wynik nie zostaną zapisane ani przechowywane. Rezultat testu i otrzymane rekomendacje pełnią jedynie funkcję informacyjną dla osoby wypełniającej. 
     """)
     
-    st.button("Rozpocznij Ocenę", on_click=go_to_test)
+    st.button("Rozpocznij Test", on_click=go_to_test)
     
     st.markdown("---")
     st.info("""
@@ -662,71 +657,77 @@ elif st.session_state["page"] == "results":
 # 2. Generowanie Inteligentnego Podsumowania (Wnioski i Rekomendacje)
     st.header("Wynik Oceny i Rekomendacje")
 
-    if dominujacy_poziom == 0:
-        st.error("### Poziom 0: Brak Formalnego CSR")
-        st.write("""
-        **Analiza:** Firma znajduje się na etapie reaktywnym, gdzie działania prospołeczne i prośrodowiskowe praktycznie nie występują. Brak monitoringu podstawowych wskaźników, takich jak rotacja pracowników czy zużycie mediów, generuje wysokie ryzyko operacyjne.
-        
-        **Kluczowe Rekomendacje:**
-        * **Zarządzanie:** Konieczne jest powołanie zespołu lub wyznaczenie osoby odpowiedzialnej za obszar zrównoważonego rozwoju.
-        * **Operacje:** Rozpoczęcie mierzenia podstawowych parametrów, takich jak terminowość i kompletność zleceń, aby ustabilizować fundamenty ekonomiczne.
-        * **Standardy:** Wprowadzenie elementarnych procedur antydyskryminacyjnych oraz monitorowanie terminowości wypłat wynagrodzeń.
+    if dominujacy_poziom == 0: 
+        st.error("### Poziom 0: Brak Formalnego CSR") 
+        st.write(""" 
+        **Analiza:** Organizacja nie podejmuje świadomych działań w obszarze społecznej odpowiedzialności biznesu ani zrównoważonego rozwoju. Temat ten nie jest postrzegany jako istotny i konieczny do wdrożenia. Działania – jeśli występują – mają charakter incydentalny i nie wynikają ze strategii, a firma nie spełnia minimalnych standardów rynkowych lub prawnych w wybranych obszarach swojego funkcjonowania.       
+
+        **Kluczowe Rekomendacje:** 
+        * **Świadomość:** Wprowadzenie działań edukacyjnych dla kadry zarządzającej oraz pracowników w zakresie CSR i zrównoważonego rozwoju. 
+        * **Zarządzanie:** Powołanie zespołu lub wyznaczenie osoby odpowiedzialnej za obszar zrównoważonego rozwoju w strukturze organizacyjnej. 
+        * **Działania operacyjne:** Rozpoczęcie mierzenia podstawowych parametrów dla obszarów o największym negatywnym wpływie (np. generowanie odpadów, zużycie energii, bezpieczeństwo pracy) 
+        * **Zgodność prawna:** Przeprowadzenie przeglądu obowiązujących regulacji (środowiskowych, pracowniczych, produktowych) oraz wdrożenie działań zapewniających ich pełne spełnienie. 
         """)
 
-    elif dominujacy_poziom == 1:
-        st.info("### Poziom 1: Wczesny Rozwój")
-        st.write("""
-        **Analiza:** Firma posiada wstępną świadomość potrzeby zmian, jednak podejmowane działania mają charakter rozproszony i okazjonalny. Wskaźniki rentowności zielonych inwestycji (ROI) oraz zaangażowanie w wolontariat pozostają na niskim poziomie.
-        
-        **Kluczowe Rekomendacje:**
-        * **Efektywność:** Skupienie się na redukcji pustych przebiegów oraz optymalizacji tras, co pozwoli na szybkie połączenie oszczędności z ochroną środowiska.
-        * **Edukacja:** Zwiększenie liczby godzin szkoleń przypadających na jednego pracownika (cel: powyżej 10h rocznie).
-        * **Strategia:** Rozważenie wdrożenia wytycznych normy ISO 26000, aby nadać działaniom CSR bardziej formalne ramy.
-        """)
+    elif dominujacy_poziom == 1: 
+        st.info("### Poziom 1: Wczesny Rozwój") 
+        st.write(""" 
+        **Analiza:** Firma znajduje się na etapie budowania świadomości w zakresie CSR i zrównoważonego rozwoju, a pierwsze działania są inicjowane głównie w odpowiedzi na wymagania prawne, rynkowe lub oczekiwania wybranych interesariuszy. Zaangażowanie w te obszary ma charakter rozproszony lub okazjonalny i nie jest jeszcze spójnie powiązane ze strategią ani codziennym zarządzaniem. 
 
-    elif dominujacy_poziom == 2:
-        st.info("### Poziom 2: Transformacja")
-        st.write("""
-        **Analiza:** Proces formalizacji działań został rozpoczęty. Firma monitoruje wagę wytwarzanych odpadów oraz zużycie wody, a w strukturach funkcjonuje już dedykowany zespół ds. zrównoważonego rozwoju.
-        
-        **Kluczowe Rekomendacje:**
-        * **Środowisko:** Przejście od pasywnego monitoringu do realnych modernizacji, np. poprzez zwiększenie udziału oświetlenia LED w obiektach powyżej 50%.
-        * **Społecznie:** Wdrożenie systematycznych przeglądów wyników pracy oraz rozmów o ścieżkach kariery dla co najmniej 40% personelu.
-        * **Łańcuch dostaw:** Rozpoczęcie weryfikacji dostawców pod kątem ich lokalizacji oraz stosowania przez nich zasad etyki biznesowej.
-        """)
+        **Kluczowe Rekomendacje:** 
 
-    elif dominujacy_poziom == 3:
-        st.warning("### Poziom 3: Integracja")
-        st.write("""
-        **Analiza:** Zasady CSR stają się integralną częścią procesów biznesowych. Firma osiąga stabilną rentowność netto (10-13%) i przeznacza wymierną część kapitału na inwestycje prośrodowiskowe.
-        
-        **Kluczowe Rekomendacje:**
-        * **Certyfikacja:** Uzyskanie certyfikatów ISO 14001 lub EMAS, co pozwoli na formalne potwierdzenie dojrzałości środowiskowej przed kontrahentami.
-        * **Ekoprojektowanie:** Wdrożenie zasad Eco-designu w odniesieniu do opakowań i procesów logistycznych, przy jednoczesnym zwiększeniu udziału materiałów z odzysku.
-        * **HR:** Podjęcie działań na rzecz redukcji luki płacowej (Gender Pay Gap) oraz regularne angażowanie pracowników w wolontariat.
-        """)
+        * **Efektywność:** Wdrożenie prostych działań ograniczających zużycie energii, surowców i ilość odpadów, szczególnie tam, gdzie możliwe jest osiągnięcie korzyści ekonomicznych równocześnie z ochroną środowiska (np. redukcja pustych przebiegów i optymalizacja tras). 
+        * **Edukacja:** Prowadzenie działań edukacyjnych zwiększających wiedzę i świadomość pracowników w obszarze zrównoważonego rozwoju, ze szczególnym uwzględnieniem kadry kierowniczej i agentów zmiany. 
+        * **Strategia:** Opracowanie podstawowej polityki CSR, określającej cele, priorytety oraz zgodność działań z obowiązującymi regulacjami. 
+        """) 
+
+    elif dominujacy_poziom == 2: 
+        st.info("### Poziom 2: Transformacja") 
+        st.write(""" 
+        **Analiza:** Proces formalizacji i realizacji strategii został rozpoczęty. Firma aktywnie opracowuje, testuje i wprowadza działania w obszarze CSR w wielu obszarach funkcjonowania, a w strukturach uwzględniony już jest dedykowany zespół ds. zrównoważonego rozwoju. Widoczne jest rosnące zaangażowanie kierownictwa oraz pracowników, a kwestie środowiskowe i społeczne zaczynają istotnie wpływać na decyzje operacyjne, inwestycyjne i organizacyjne. 
+
+        **Kluczowe Rekomendacje:** 
+
+        * **Usprawnienia:** Przejście od pasywnego monitorowania i działań pilotażowych do wdrażania realnych modernizacji, jak np. rozwój rozwiązań wspierających gospodarkę o obiegu zamkniętym lub zwiększenie udziału oświetlenia LED w obiektach powyżej 50%. 
+        * **Rozwój kompetencji:** Systematyczny rozwój kompetencji związanych z zarządzaniem zmianą, efektywnością procesów i innowacyjnością, wspierające budowanie kultury zrównoważonego rozwoju. 
+        * **Intereasriusze:** Rozpoczęcie systematycznej weryfikacji działań kluczowych interesariuszy (dostawców, partnerów logistycznych, podwykonawców) pod kątem ich lokalizacji i stosowania zasad etyki biznesowej oraz stopniowe włączanie ich do wspólnych celów CSR. 
+        * **Integracja działań:** Ujednolicenie podejmowanych inicjatyw poprzez ich formalne wpisanie w strategię organizacji, określenie wspólnych celów, odpowiedzialności oraz zasad współpracy pomiędzy działami, tak aby działania na rzecz CSR były spójne i wzajemnie się wzmacniały. 
+        """) 
+
+    elif dominujacy_poziom == 3: 
+        st.warning("### Poziom 3: Integracja") 
+        st.write(""" 
+        **Analiza:** Organizacja integruje zasady CSR i zrównoważonego rozwoju z kluczowymi obszarami swojej działalności, traktując je jako element strategii i codziennego zarządzania. Firma podejmuje realne usprawnienia, osiąga stabilną rentowność, przeznacza wymierną część kapitału na inwestycje środowiskowe lub społeczne, a współpraca z interesariuszami coraz częściej opiera się na wspólnych wartościach i długoterminowych celach.        
+
+        **Kluczowe Rekomendacje:** 
+        * **Certyfikacja:** Uzyskanie certyfikatów ISO 14001, ISO 26000 lub EMAS, co pozwoli na formalne potwierdzenie dojrzałości środowiskowej przed kontrahentami. 
+        * **Gospodarka Obiegu Zamkniętego:** Wdrożenie zasad ekoprojektowania w odniesieniu do opakowań i procesów logistycznych, z myślą o całym cyklu życia, ponownym wykorzystaniu materiałów, regeneracji oraz ograniczaniu zużycia zasobów i energii. 
+        * **Zarządzanie energią:** Rozwój produkcji własnej zielonej energii oraz wykorzystywanie i integracja paliw z odnawialnych źródeł z infrastrukturą organizacji w celu systematycznego obniżania śladu węglowego. 
+        * **Wydajność i efektywność:** Ciągłe i systematyczne zwiększanie efektywności procesów produkcyjnych, logistycznych i administracyjnych poprzez optymalizację zużycia zasobów, energii i czasu. 
+        """) 
 
     elif dominujacy_poziom == 4:
-        st.success("### Poziom 4: Dojrzałość")
-        st.write("""
-        **Analiza:** Firma wykazuje dojrzałe podejście do zarządzania. Wysoka efektywność operacyjna (terminowość >99%) idzie w parze z systemowym monitorowaniem emisji gazów cieplarnianych (GHG).
-        
-        **Kluczowe Rekomendacje:**
-        * **Energia:** Inwestycja we własne odnawialne źródła energii (OZE) z celem pokrycia powyżej 40% zapotrzebowania firmy.
-        * **Transport:** Zwiększenie udziału transportu intermodalnego lub niskoemisyjnego w całym łańcuchu dostaw powyżej progu 30%.
-        * **Raportowanie:** Wdrożenie pełnej transparentności wyników środowiskowych i społecznych w formie publicznych raportów okresowych.
-        """)
+        st.success("### Poziom 4: Dojrzałość") 
+        st.write(""" 
+        **Analiza:** Firma wykazuje dojrzałe podejście do zrównoważonego zarządzania i osiąga bardzo wysoki poziom efektywności operacyjnej wyrażony m.in. terminowością, kompletnością i rentownością. Zasady CSR stanowią integralny element strategii i kultury organizacyjnej, a cele środowiskowe, społeczne i ekonomiczne są jasno zdefiniowane, mierzalne i systematycznie monitorowane. 
+    
+        **Kluczowe Rekomendacje:** 
+        * **Energia:** Inwestycja we własne odnawialne źródła energii (OZE) z celem pokrycia powyżej 40% zapotrzebowania firmy. 
+        * **Transport:** Zwiększenie udziału transportu intermodalnego lub niskoemisyjnego w całym łańcuchu dostaw powyżej progu 30%. 
+        * **Komunikacja i motywacja:** Pogłębianie transparentnej, dwustronnej komunikacji z interesariuszami, budowanie zaufania oraz aktywne angażowanie otoczenia w działania na rzecz zrównoważonego rozwoju. 
+        * **Dobrostan pracowników:** Zapewnienia najlepszych warunków dla pracowników poprzez m.in. osiągnięcie zerowej wypadkowości, zapewnienie ponad 40 godzin szkoleń rocznie na pracownika, objęcie ponad 90% pracowników regularną oceną okresową oraz utrzymywanie konkurencyjnych, terminowo wypłacanych wynagrodzeń. 
+        """) 
 
-    elif dominujacy_poziom == 5: 
-        st.success("### Poziom 5: Innowacyjne Przywództwo")
-        st.write("""
-        **Analiza:** Firma jest liderem i innowatorem w branży logistycznej. Osiągane wyniki, takie jak zerowa wypadkowość, minimalne puste przebiegi (<5%) oraz wysoki zwrot z zielonych inwestycji, stanowią wzorzec rynkowy.
-        
-        **Kluczowe Rekomendacje:**
-        * **Oddziaływanie:** Wywieranie wpływu na partnerów biznesowych poprzez obowiązkowe audyty etyczne i promowanie dobrych praktyk w całym sektorze.
-        * **Innowacje:** Współpraca z jednostkami badawczymi nad nowymi technologiami ograniczającymi wpływ logistyki na ekosystem.
-        * **Doskonalenie:** Utrzymanie pozycji lidera poprzez stałą aktualizację strategii względem najnowszych globalnych standardów ESG.
-        """)
+    elif dominujacy_poziom == 5:  
+        st.success("### Poziom 5: Innowacyjne Przywództwo") 
+        st.write(""" 
+        **Analiza:** Firma jest liderem i innowatorem zrównoważonego rozwoju, a zasady CSR są trwale wpisane w jej strategię, kulturę i sposób oddziaływania na otoczenie. Osiągane wyniki, takie jak zerowa wypadkowość, minimalne puste przebiegi (<5%) oraz wysoki zwrot z zielonych inwestycji, stanowią wzorzec rynkowy, inspirując interesariuszy do podejmowania odpowiedzialnych działań. 
+
+        **Kluczowe Rekomendacje:** 
+        * **Oddziaływanie:** Wywieranie wpływu na partnerów biznesowych poprzez obowiązkowe audyty etyczne i środowiskowe, inicjowanie współpracy sieciowej oraz współtworzenie branżowych standardów i promowanie dobrych praktyk w całym sektorze. 
+        * **Innowacje:** Współpraca z jednostkami badawczymi nad nowymi technologiami ograniczającymi wpływ logistyki na ekosystem. 
+        * **Doskonalenie:** Utrzymanie pozycji lidera poprzez systematyczne monitorowanie efektów działań, aktualizację strategii i celów CSR oraz ciągłe doskonalenie procesów, produktów i modeli biznesowych w odpowiedzi na zmieniające się wyzwania środowiskowe i społeczne. 
+        """) 
     
     st.markdown("---")
 
