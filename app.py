@@ -3,7 +3,6 @@ import pandas as pd
 import time
 from typing import Dict, List, Any, Set
 
-
 # ----------------------------------------------------------------------
 # 0. FUNKCJE POMOCNICZE
 # ----------------------------------------------------------------------
@@ -14,51 +13,38 @@ def calculate_scores(pytania_df):
     
     for index, row in pytania_df.iterrows():
         klucz_pytania = row['Klucz']
-        
-        # Wybrana_opcja_label to treść odpowiedzi, np. 'Powyżej 95%'
         wybrana_opcja_label = st.session_state.get(klucz_pytania)
 
         if wybrana_opcja_label is not None:
             
             try:
-                # Szukamy, ile punktów (np. 0, 1, 5) dała ta odpowiedź
                 punkty_za_odpowiedz_id = row['Opcje_Punkty'][wybrana_opcja_label]
-            
                 przypisane_poziomy = row['Przypisanie_Poziomów'].get(punkty_za_odpowiedz_id)
                 
                 if isinstance(przypisane_poziomy, list):
                     for poziom in przypisane_poziomy:
                         if poziom in st.session_state.wyniki_poziomow:
-                            # Zwiększamy licznik aktywacji danego poziomu
                             st.session_state.wyniki_poziomow[poziom] += 1
             except KeyError as e:
-                # Błąd w definicji pytania/odpowiedzi
                 pass
-
 
 def calculate_max_scores(pytania_df) -> Dict[int, int]:
     """
     Oblicza maksymalną liczbę pytań, które potencjalnie mogą aktywować każdy poziom P0-P5.
     (To jest podstawa do obliczenia 100%).
     """
-    # Używamy Set, aby przechowywać unikalne klucze pytań dla każdego poziomu.
     max_scores_tracker: Dict[int, Set[str]] = {p: set() for p in range(6)} 
     
     for index, row in pytania_df.iterrows():
         klucz_pytania = row['Klucz']
         
-        # Przechodzimy przez wszystkie możliwe przypisania poziomów dla tego pytania
-        # (czyli wszystkie możliwe odpowiedzi).
         for opcja_id, lista_poziomow in row['Przypisanie_Poziomów'].items():
             if isinstance(lista_poziomow, list):
                 for poziom in lista_poziomow:
                     if poziom in max_scores_tracker:
-                        # Jeśli odpowiedź aktywuje ten poziom, dodajemy klucz pytania
                         max_scores_tracker[poziom].add(klucz_pytania)
 
-    # Zwracamy liczbę unikalnych pytań, które potencjalnie aktywują dany poziom
     return {p: len(questions) for p, questions in max_scores_tracker.items()}
-
 
 def go_to_test():
     st.session_state["page"] = "test"
@@ -90,7 +76,6 @@ def validate_answers(pytania_df):
         st.session_state['missing_q_numbers'] = pytania_bez_odpowiedzi
         return False
     else:
-        # Oblicz wyniki i przejdź do strony z wynikami
         calculate_scores(pytania_df)
         st.session_state.update(page="results")
         return True
@@ -469,20 +454,16 @@ pytania_data = [
     {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5]}, srodowiskowy),
 ]
 
-# Tworzenie DataFrame z pytaniami
 pytania_df = pd.DataFrame(
     pytania_data, 
     columns=['Pytanie', 'Klucz', 'Opcje_Punkty', 'Przypisanie_Poziomów', 'Obszar']
 )
 
-# Nadanie numerów pytaniom
 pytania_df['Pytanie_Nr'] = range(1, len(pytania_df) + 1)
 pytania_df['Pytanie_Full'] = pytania_df['Pytanie_Nr'].astype(str) + ". " + pytania_df['Pytanie']
 
-# OBLICZENIE MAKSYMALNYCH PUNKTÓW (100% kryterium)
 max_punkty_poziomow = calculate_max_scores(pytania_df) 
 
-# Definicje Poziomów
 poziomy_nazwy = {
     0: "P0: Brak Formalnego CSR", 
     1: "P1: Wczesny Rozwój", 
@@ -496,7 +477,6 @@ poziomy_nazwy = {
 # 2. INTERFEJS UŻYTKOWNIKA
 # ----------------------------------------------------------------------
 
-# --- INICJALIZACJA STANU SESJI ---
 if 'page' not in st.session_state:
     st.session_state["page"] = "welcome"
 
@@ -510,7 +490,6 @@ if 'missing_q_numbers' not in st.session_state:
     st.session_state['missing_q_numbers'] = []
     
 st.set_page_config(page_title="Narzędzie Oceny CSR w Logistyce", layout="wide") 
-
 
 # --- LOGIKA PRZECHODZENIA MIĘDZY STRONAMI ---
 
@@ -579,14 +558,12 @@ elif st.session_state["page"] == "test":
                     index=initial_index,
                 )
         
-        # --- LOKALIZACJA BŁĘDU ---
         if st.session_state.get('validation_error', False):
             missing_q = st.session_state.get('missing_q_numbers', [])
             missing_q_str = ", ".join(map(str, sorted(missing_q)))
             
             st.error(f"⚠️ Proszę odpowiedzieć na wszystkie pytania. Brakuje odpowiedzi dla pytań o numerach: **{missing_q_str}**.")
 
-        # PRZYCISK ZATWIERDZENIA
         st.form_submit_button(
             "Oblicz Poziom Zrównoważonego Rozwoju",
             on_click=lambda: validate_answers(pytania_df) 
@@ -598,7 +575,7 @@ elif st.session_state["page"] == "results":
     wyniki_poziomow = st.session_state.wyniki_poziomow
 
     # ----------------------------------------------------------------------
-    # LOGIKA OKREŚLANIA DOMINUJĄCEGO POZIOMU
+    # LOGIKA OKREŚLANIA POZIOMU
     # ----------------------------------------------------------------------
     
     dominujacy_poziom = 0
@@ -644,7 +621,7 @@ elif st.session_state["page"] == "results":
 
     # ----------------------------------------------------------------------
     
-    # 1. Tworzenie DataFrame z wynikami
+    # 1. Tworzenie tabeli z wynikami
     df_wyniki = pd.DataFrame(
         list(wyniki_poziomow.items()), 
         columns=['Poziom_ID', 'Suma Punktów']
@@ -654,7 +631,7 @@ elif st.session_state["page"] == "results":
     
     df_wyniki = df_wyniki[['Poziom_ID', 'Poziom', 'Suma Punktów', 'Procent Osiągnięcia']]
     
-# 2. Generowanie Inteligentnego Podsumowania (Wnioski i Rekomendacje)
+# 2. Wnioski i Rekomendacje
     st.header("Wynik Oceny i Rekomendacje")
 
     if dominujacy_poziom == 0: 
@@ -731,15 +708,12 @@ elif st.session_state["page"] == "results":
     
     st.markdown("---")
 
-    # 3. Wyświetlenie punktacji w tabeli
     st.subheader("Szczegółowa Tabela Wyników i Osiągnięte Procenty")
     
-    # FUNKCJA PODŚWIETLANIA:
     def highlight_dominant_level(row, dominant_level_id):
         is_dominant = row['Poziom_ID'] == dominant_level_id
         return ['background-color: #ffdd44; color: black' if is_dominant else '' for _ in row]
     
-    # Wyświetlanie tabeli
     st.dataframe(
         df_wyniki.style.apply(highlight_dominant_level, 
                               axis=1,
@@ -765,3 +739,4 @@ elif st.session_state["page"] == "results":
         Autorzy: Olga Paszyńska, Justyna Robak, Urszula Sewerniuk. Promotor: dr inż. Katarzyna Ragin-Skorecka.
     </p>
     """, unsafe_allow_html=True)
+
